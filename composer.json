@@ -1,6 +1,6 @@
 {
     "name": "webpress/dynamic-contact-form",
-    "description": "Contact form input dynamic",
+    "description": "Dynamic-Contact-Form Package for Laravel",
     "authors": [
         {
             "name": "linhnn",
@@ -10,12 +10,12 @@
     "autoload": {
         "classmap": [],
         "psr-4": {
-            "Package\\": "src/app/"
+            "VCComponent\\Laravel\\ConfigContact\\": "src/app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Package\\Test\\": "tests/"
+            "VCComponent\\Laravel\\ConfigContact": "tests/"
         }
     },
     "require": {},
@@ -29,7 +29,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Package\\Providers\\PackageServiceProvider"
+                "VCComponent\\Laravel\\ConfigContact\\Providers\\ConfigContactServiceProvider"
             ]
         }
     },
