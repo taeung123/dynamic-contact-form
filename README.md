@@ -31,15 +31,17 @@ protected $middleware = [
 
 ];
 ```
-##View/Composer & AppServiceProvider
+## View/Composer & AppServiceProvider
 Create ```ContactFormComposer.php``` :
 ```php
 use VCComponent\Laravel\ConfigContact\Entites\ContactForm;
 ...
-public function compose(View $view)
-{
-    $contact_form = new ContactForm;
-    $view->with('contact_form', $contact_form);
+class ContactFormComposer{
+    public function compose(View $view)
+    {
+        $contact_form = new ContactForm;
+        $view->with('contact_form', $contact_form);
+    }
 }
 ```
 In ```AppServiceProvider.php``` :
@@ -48,7 +50,7 @@ use App\Http\View\Composers\ContactFormComposer;
 ...
 public function boot()
 {
-    View::composer('contact', ContactFormComposer::class);
+    View::composer('pages.contact', ContactFormComposer::class);
 }
 ```
 ## Front-end

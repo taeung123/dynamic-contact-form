@@ -77,8 +77,10 @@ class ContactFormInputController extends ApiController
 
         $data['slug'] = $this->changeLabelToSlug($data['label']);
         $this->contact_form_input_repository->update($data, $id);
+
         if (isset($data["contactFormInputItems"])) {
             $contact_form_input = $this->contact_form_input_repository->find($id);
+            $contact_form_input->contactFormInputItems()->delete();
             foreach ($data["contactFormInputItems"] as $item) {
                 $this->contact_form_input_item_validation->isValid($item, 'RULE_UPDATE');
                 $item['slug'] = $this->changeLabelToSlug($item['label']);
@@ -98,8 +100,10 @@ class ContactFormInputController extends ApiController
                 );
             }
         }
+
         if (isset($data["contactFormInputValidations"])) {
             $contact_form_input = $this->contact_form_input_repository->find($id);
+            $contact_form_input->contactFormInputValidations()->delete();
             foreach ($data["contactFormInputValidations"] as $item) {
                 $this->contact_form_input_validation_validation->isValid($item, 'RULE_UPDATE');
                 $contact_form_input->contactFormInputValidations()->updateOrCreate(
