@@ -1,6 +1,7 @@
 <?php
 namespace VCComponent\Laravel\ConfigContact\Http\Controllers\Admin;
 
+use Exception;
 use Illuminate\Http\Request;
 use VCComponent\Laravel\ConfigContact\Entites\ContactFormInput;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputItemRepository;
@@ -46,13 +47,21 @@ class ContactFormInputController extends ApiController
     public function createInput(Request $request)
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
-        $data               = $request->all();
+
+        $data = $request->all();
+
+        $label_array = $this->contact_form_input_repository->pluck('label');
+        if (in_array($data['label'], $label_array->toArray())) {
+            throw new Exception('Input label đã tồn tại, nhập label khác');
+        }
+
         $data['slug']       = $this->changeLabelToSlug($data['label']);
         $contact_form_input = new ContactFormInput($data);
         $contact_form       = $this->contact_form_repository->find($request->contact_form_id);
         $query              = $contact_form->contactFormInputs()->create($contact_form_input->toArray());
 
         $contact_form_input = $this->contact_form_input_repository->find($query->id);
+
         if (isset($data["contactFormInputItems"])) {
             foreach ($data["contactFormInputItems"] as $item) {
                 $this->contact_form_input_item_validation->isValid($item, 'RULE_CREATE');
@@ -60,12 +69,14 @@ class ContactFormInputController extends ApiController
                 $contact_form_input->contactFormInputItems()->create($item);
             }
         }
+
         if (isset($data["contactFormInputValidations"])) {
             foreach ($data["contactFormInputValidations"] as $item) {
                 $this->contact_form_input_validation_validation->isValid($item, 'RULE_CREATE');
                 $contact_form_input->contactFormInputValidations()->create($item);
             }
         }
+
         $data_response = $this->contact_form_input_repository->with(['contactFormInputItems', 'contactFormInputValidations'])->find($query->id)->toArray();
         return response()->json($data_response);
     }
@@ -73,7 +84,18 @@ class ContactFormInputController extends ApiController
     public function updateInput(Request $request, $id)
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_UPDATE');
+
         $data = $request->all();
+
+        $label_current      = $this->contact_form_input_repository->find($id)->label;
+        $check_label_exists = $this->contact_form_input_repository
+            ->select('label')
+            ->where('label', '=', $data['label'])
+            ->where('label', '!=', $label_current)
+            ->exists();
+        if ($check_label_exists) {
+            throw new Exception('Input label tồn tại, nhập label khác');
+        }
 
         $data['slug'] = $this->changeLabelToSlug($data['label']);
         $this->contact_form_input_repository->update($data, $id);
@@ -118,6 +140,7 @@ class ContactFormInputController extends ApiController
                 );
             }
         }
+
         $data_response = $this->contact_form_input_repository->with(['contactFormInputItems', 'contactFormInputValidations'])->find($id)->toArray();
         return response()->json($data_response);
     }

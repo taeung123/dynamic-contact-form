@@ -9,7 +9,7 @@ trait RenderFormMethods
         $contact_form = $this->where('status', 1)->with(['contactFormInputs' => function ($q) {
             $q->with(['contactFormInputItems' => function ($q) {
                 $q->orderBy('order');
-            }])->orderBy('order')->get();
+            }]);
         }])->first();
         if ($contact_form) {
             $html = '<input name="contact_form_id" value="' . $contact_form->id . '" hidden> </input>';

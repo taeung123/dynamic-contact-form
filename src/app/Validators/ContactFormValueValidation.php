@@ -20,10 +20,10 @@ class ContactFormValueValidation
         $array_rule_values   = [];
         $array_rule_values_2 = [];
 
-        $index = 0;
         foreach(array_keys($data) as $key){
             $array_rules[] = $key;
         }
+        $index = 0;
         foreach (array_keys($data) as $value) {
 
             $get_validations = ContactFormInput::with('contactFormInputValidations')->where('slug', $value)->first();
