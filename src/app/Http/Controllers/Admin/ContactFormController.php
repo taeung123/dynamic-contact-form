@@ -8,6 +8,7 @@ use VCComponent\Laravel\ConfigContact\Traits\Helpers;
 use VCComponent\Laravel\ConfigContact\Transformers\ContactFormTransformer;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormValidation;
 use VCComponent\Laravel\Vicoders\Core\Controllers\ApiController;
+use VCComponent\Laravel\Vicoders\Core\Exceptions\PermissionDeniedException;
 
 class ContactFormController extends ApiController
 {
@@ -16,6 +17,7 @@ class ContactFormController extends ApiController
     protected $contact_form_transformer;
     protected $contact_form_repository;
     protected $contact_form_validation;
+    protected $contact_form_entity;
 
     public function __construct(
         ContactFormRepository $contact_form_repository,
@@ -24,6 +26,17 @@ class ContactFormController extends ApiController
         $this->contact_form_repository  = $contact_form_repository;
         $this->contact_form_transformer = $contact_form_transformer;
         $this->contact_form_validation  = $contact_form_validation;
+        $this->contact_form_entity      = $contact_form_repository->getEntity();
+
+        if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
+            $user = $this->getAuthenticatedUser();
+            if (!$this->contact_form_entity->ableToUse($user)) {
+                throw new PermissionDeniedException();
+            }
+            foreach (config('dynamic-contact-form.auth_middleware.admin') as $middleware) {
+                $this->middleware($middleware['middleware'], ['except' => $middleware['except']]);
+            }
+        }
     }
 
     public function index(Request $request)

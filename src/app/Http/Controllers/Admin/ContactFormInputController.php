@@ -42,6 +42,7 @@ class ContactFormInputController extends ApiController
         $this->contact_form_input_validation            = $contact_form_input_validation;
         $this->contact_form_input_item_validation       = $contact_form_input_item_validation;
         $this->contact_form_input_validation_validation = $contact_form_input_validation_validation;
+
     }
 
     public function createInput(Request $request)
@@ -135,7 +136,6 @@ class ContactFormInputController extends ApiController
                     [
                         'validation_name'  => $item['validation_name'],
                         "validation_value" => $item['validation_value'],
-
                     ]
                 );
             }

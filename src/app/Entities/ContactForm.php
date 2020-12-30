@@ -26,5 +26,8 @@ class ContactForm extends Model
     {
         return $this->hasMany(ContactFormValue::class);
     }
-
+    public function ableToUse($user)
+    {
+        return true;
+    }
 }

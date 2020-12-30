@@ -45,6 +45,7 @@ class ConfigContactServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . "/../../resources/views", 'contact_form');
         $this->publishes([
             __DIR__ . "/../../resources/sass/_contact-form.scss" => base_path('/resources/sass/contact-form/_contact-form.scss'),
+            __DIR__ . '/../../config/dynamic-contact-form.php'   => config_path('dynamic-contact-form.php'),
         ]);
     }
 }

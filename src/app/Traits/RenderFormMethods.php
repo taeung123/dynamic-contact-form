@@ -6,14 +6,18 @@ trait RenderFormMethods
     use Helpers;
     public function renderContactForm()
     {
-        $contact_form = $this->where('status', 1)->with(['contactFormInputs' => function ($q) {
+        $contact_forms = $this->where('status', 1)->with(['contactFormInputs' => function ($q) {
             $q->with(['contactFormInputItems' => function ($q) {
                 $q->orderBy('order');
             }]);
-        }])->first();
-        if ($contact_form) {
-            $html = '<input name="contact_form_id" value="' . $contact_form->id . '" hidden> </input>';
-            echo $html;
+        }])->get();
+
+        foreach ($contact_forms as $contact_form) {
+            $html_head = '<form action="' . route('send') . '" method="POST" role="form" class="' . $contact_form->slug . '">';
+            $html_head .= '<legend>' . $contact_form->name . '</legend>';
+            $html_head .= '<input name="contact_form_id" value="' . $contact_form->id . '" hidden> </input>';
+            echo $html_head;
+
             foreach ($contact_form->contactFormInputs as $input) {
                 if ($input->type_input === "text") {
                     echo $this->renderInputText($input);
@@ -31,6 +35,9 @@ trait RenderFormMethods
                     echo $this->renderInputCheckBox($input);
                 }
             }
+
+            $html_foot = '<button type="submit" class="btn btn-primary">Gửi</button></form>';
+            echo $html_foot;
         }
     }
     public function renderInputText($input)
@@ -61,7 +68,7 @@ trait RenderFormMethods
         $html .= '<label>' . $input->label . '<label>';
         if ($input->contactFormInputItems->count() > 0) {
             $first = true;
-            foreach ($input->contactFormInputItems as $key => $item) {
+            foreach ($input->contactFormInputItems as $item) {
                 if ($first) {
                     $html .= ' <label>';
                     $html .= '<input type="radio" name="' . $name . '" id="' . $item->slug . '" value="' . $item->value . '" checked>';
