@@ -12,7 +12,8 @@ class ContactFormValueValidation
 
     public function isValid(Request $request)
     {
-        $data = $request->all();
+        $data            = $request->all();
+        $id_contact_form = $data['contact_form_id'];
         array_shift($data);
         $array_rules         = [];
         $array_alerts        = [];
@@ -20,17 +21,18 @@ class ContactFormValueValidation
         $array_rule_values   = [];
         $array_rule_values_2 = [];
 
-        foreach(array_keys($data) as $key){
+        foreach (array_keys($data) as $key) {
             $array_rules[] = $key;
         }
         $index = 0;
-        foreach (array_keys($data) as $value) {
 
-            $get_validations = ContactFormInput::with('contactFormInputValidations')->where('slug', $value)->first();
+        foreach (array_keys($data) as $value) {
+            $get_validations = ContactFormInput::whereHas('contactForm', function ($q) use ($id_contact_form) {
+                $q->where('id', $id_contact_form);
+            })->with('contactFormInputValidations')->where('slug', $value)->first();
 
             if ($get_validations->contactFormInputValidations->count() > 0) {
                 $array_rule_keys[] = $get_validations->slug;
-
                 foreach ($get_validations->contactFormInputValidations as $key => $validation) {
                     $key_after_change                = $this->changeKey($get_validations->slug . "." . $validation->validation_name);
                     $array_alerts[$key_after_change] = $get_validations->label . " " . $validation->validation_value;
@@ -46,10 +48,10 @@ class ContactFormValueValidation
                     $array_rule_values_2[$index_2] = implode("|", $value);
                     $index_2++;
                 }
-
                 $array_rules = array_combine($array_rule_keys, $array_rule_values_2);
             }
         }
+
         $validatedData = $request->validate(
             $array_rules,
             $array_alerts

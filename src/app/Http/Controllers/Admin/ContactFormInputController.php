@@ -49,9 +49,10 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
-        $data = $request->all();
-
-        $label_array = $this->contact_form_input_repository->pluck('label');
+        $data        = $request->all();
+        $label_array = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
+            $q->where('id', $data['contact_form_id']);
+        })->pluck('label');
         if (in_array($data['label'], $label_array->toArray())) {
             throw new Exception('Input label đã tồn tại, nhập label khác');
         }
@@ -86,23 +87,25 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_UPDATE');
 
-        $data = $request->all();
+        $data          = $request->all();
+        $label_current = $this->contact_form_input_repository->find($id)->label;
 
-        $label_current      = $this->contact_form_input_repository->find($id)->label;
-        $check_label_exists = $this->contact_form_input_repository
-            ->select('label')
+        $check_label_exists = $this->contact_form_input_repository->with(['contactForm' => function ($q) use ($data) {
+            $q->where('id', $data['contact_form_id']);}])
             ->where('label', '=', $data['label'])
             ->where('label', '!=', $label_current)
             ->exists();
+
         if ($check_label_exists) {
             throw new Exception('Input label tồn tại, nhập label khác');
         }
 
+        $contact_form_input = ContactFormInput::find($id);
         $data['slug'] = $this->changeLabelToSlug($data['label']);
-        $this->contact_form_input_repository->update($data, $id);
+        $contact_form_input->update($data);
 
         if (isset($data["contactFormInputItems"])) {
-            $contact_form_input = $this->contact_form_input_repository->find($id);
+            $contact_form_input = ContactFormInput::find($id);
             $contact_form_input->contactFormInputItems()->delete();
             foreach ($data["contactFormInputItems"] as $item) {
                 $this->contact_form_input_item_validation->isValid($item, 'RULE_UPDATE');
@@ -125,7 +128,7 @@ class ContactFormInputController extends ApiController
         }
 
         if (isset($data["contactFormInputValidations"])) {
-            $contact_form_input = $this->contact_form_input_repository->find($id);
+            $contact_form_input = ContactFormInput::find($id);
             $contact_form_input->contactFormInputValidations()->delete();
             foreach ($data["contactFormInputValidations"] as $item) {
                 $this->contact_form_input_validation_validation->isValid($item, 'RULE_UPDATE');
@@ -141,7 +144,7 @@ class ContactFormInputController extends ApiController
             }
         }
 
-        $data_response = $this->contact_form_input_repository->with(['contactFormInputItems', 'contactFormInputValidations'])->find($id)->toArray();
+        $data_response = ContactFormInput::with(['contactFormInputItems', 'contactFormInputValidations'])->find($id)->toArray();
         return response()->json($data_response);
     }
 

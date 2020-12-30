@@ -22,4 +22,9 @@ class ContactFormValueAdminController extends ApiController
         $contact_form_value = $this->contact_form_value_repository->orderBy('id', 'desc')->paginate($perpage);
         return $this->response->paginator($contact_form_value, new $this->contact_form_value_transformer);
     }
+    public function show($id)
+    {
+        $contact_form_value = $this->contact_form_value_repository->where('contact_form_id', $id)->get();
+        return $this->response->collection($contact_form_value, $this->contact_form_value_transformer);
+    }
 }
