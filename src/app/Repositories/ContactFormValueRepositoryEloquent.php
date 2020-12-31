@@ -11,4 +11,8 @@ class ContactFormValueRepositoryEloquent extends BaseRepository implements Conta
     {
         return ContactFormValue::class;
     }
+    public function getEntity()
+    {
+        return $this->model;
+    }
 }

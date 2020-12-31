@@ -4,6 +4,7 @@ namespace VCComponent\Laravel\ConfigContact\Traits;
 trait RenderFormMethods
 {
     use Helpers;
+
     public function renderContactForm()
     {
         $contact_forms = $this->where('status', 1)->with(['contactFormInputs' => function ($q) {

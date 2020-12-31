@@ -11,4 +11,8 @@ class ContactFormValue extends Model
         'contact_form_id',
         'payload'
     ];
+    public function ableToUse($user)
+    {
+        return true;
+    }
 }

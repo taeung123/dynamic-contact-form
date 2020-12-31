@@ -76,21 +76,24 @@ In `contact.blade.php` use this code to show contact form:
 ## Routes
 
 The api endpoint should have these format:
-| Verb      | URI                                | Action   |
-| --------- | ---------------------------------- | -------- |
-| Admin     |                                    |          |
-| GET       | /api/admin/contact-form/           | Index    |
-| GET       | /api/admin/contact-form/{id}       | Show     |
-| POST      | /api/admin/contact-form            | store    |
-| PUT       | /api/admin/contact-form/{id}       | Update   |
-| DELETE    | /api/admin/contact-form/{id}       | Destroy  |
-| ------    | ---------------------------------- | -------- |
-| POST      | /api/admin/contact-form-input      | Store    |
-| PUT       | /api/admin/contact-form-input/{id} | Update   |
-| DELETE    | /api/admin/contact-form-input/{id} | Destroy  |
-| ------    | ---------------------------------- | -------- |
-| GET       | /api/admin/contact-form-value      | Index    |
-| GET       | /api/admin/contact-form-value/{id} | Show     |
+| Verb   | URI                                | Action   |
+| ------ | ---------------------------------- | -------- |
+| Admin  |                                    |          |
+| GET    | /api/admin/contact-form/           | Index    |
+| GET    | /api/admin/contact-form/{id}       | Show     |
+| POST   | /api/admin/contact-form            | store    |
+| PUT    | /api/admin/contact-form/{id}       | Update   |
+| DELETE | /api/admin/contact-form/{id}       | Destroy  |
+| ------ | ---------------------------------- | -------- |
+| POST   | /api/admin/contact-form-input      | Store    |
+| PUT    | /api/admin/contact-form-input/{id} | Update   |
+| DELETE | /api/admin/contact-form-input/{id} | Destroy  |
+| ------ | ---------------------------------- | -------- |
+| GET    | /api/admin/contact-form-value      | Index    |
+| GET    | /api/admin/contact-form-value/{id} | Show     |
+| PUT    | /api/admin/contact-form-value/{id} | Update   |
+| DELETE | /api/admin/contact-form-value/{id} | Destroy  |
+
 | Front-end |                                    |          |
 | POST      | /send-contact-infor                | Store    |
 

@@ -31,4 +31,8 @@ class ContactFormInput extends Model
     {
         return $this->belongsTo(ContactForm::class);
     }
+    public function ableToUse($user)
+    {
+        return true;
+    }
 }

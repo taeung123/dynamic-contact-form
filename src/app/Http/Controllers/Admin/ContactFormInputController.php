@@ -13,6 +13,7 @@ use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputItemValidation;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputVaidationValidation;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputValidation;
 use VCComponent\Laravel\Vicoders\Core\Controllers\ApiController;
+use VCComponent\Laravel\Vicoders\Core\Exceptions\PermissionDeniedException;
 
 class ContactFormInputController extends ApiController
 {
@@ -42,7 +43,17 @@ class ContactFormInputController extends ApiController
         $this->contact_form_input_validation            = $contact_form_input_validation;
         $this->contact_form_input_item_validation       = $contact_form_input_item_validation;
         $this->contact_form_input_validation_validation = $contact_form_input_validation_validation;
+        $this->contact_form_input_entity                = $this->contact_form_input_repository->getEntity();
 
+        if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
+            $user = $this->getAuthenticatedUser();
+            if (!$this->contact_form_input_entity->ableToUse($user)) {
+                throw new PermissionDeniedException();
+            }
+            foreach (config('dynamic-contact-form.auth_middleware.admin') as $middleware) {
+                $this->middleware($middleware['middleware'], ['except' => $middleware['except']]);
+            }
+        }
     }
 
     public function createInput(Request $request)
@@ -87,7 +98,8 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_UPDATE');
 
-        $data          = $request->all();
+        $data = $request->all();
+
         $label_current = $this->contact_form_input_repository->find($id)->label;
 
         $check_label_exists = $this->contact_form_input_repository->with(['contactForm' => function ($q) use ($data) {
@@ -101,12 +113,14 @@ class ContactFormInputController extends ApiController
         }
 
         $contact_form_input = ContactFormInput::find($id);
-        $data['slug'] = $this->changeLabelToSlug($data['label']);
+        $data['slug']       = $this->changeLabelToSlug($data['label']);
         $contact_form_input->update($data);
 
+        $contact_form_input = ContactFormInput::find($id);
         if (isset($data["contactFormInputItems"])) {
-            $contact_form_input = ContactFormInput::find($id);
+
             $contact_form_input->contactFormInputItems()->delete();
+
             foreach ($data["contactFormInputItems"] as $item) {
                 $this->contact_form_input_item_validation->isValid($item, 'RULE_UPDATE');
                 $item['slug'] = $this->changeLabelToSlug($item['label']);
@@ -120,7 +134,7 @@ class ContactFormInputController extends ApiController
                     [
                         'label' => $item['label'],
                         "order" => $item['order'],
-                        'slug'  => $this->changeLabelToSlug($item['label']),
+                        'slug'  => $item['slug'],
                         'value' => $item["value"],
                     ]
                 );
@@ -128,8 +142,9 @@ class ContactFormInputController extends ApiController
         }
 
         if (isset($data["contactFormInputValidations"])) {
-            $contact_form_input = ContactFormInput::find($id);
+
             $contact_form_input->contactFormInputValidations()->delete();
+
             foreach ($data["contactFormInputValidations"] as $item) {
                 $this->contact_form_input_validation_validation->isValid($item, 'RULE_UPDATE');
                 $contact_form_input->contactFormInputValidations()->updateOrCreate(

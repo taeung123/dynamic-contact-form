@@ -8,5 +8,5 @@ Route::middleware('api')->prefix('api/admin')->namespace('VCComponent\Laravel\Co
     Route::put('contact-form-input/{id}', 'ContactFormInputController@updateInput');
     Route::delete('contact-form-input/{id}', 'ContactFormInputController@deleteInput');
 
-    Route::resources(['contact-form-value' => 'ContactFormValueAdminController'], ['only' => ['index', 'show']]);
+    Route::resources(['contact-form-value' => 'ContactFormValueAdminController'], ['only' => ['index', 'show', 'update', 'destroy']]);
 });

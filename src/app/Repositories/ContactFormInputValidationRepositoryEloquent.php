@@ -11,4 +11,8 @@ class ContactFormInputValidationRepositoryEloquent extends BaseRepository implem
     {
         return ContactFormInputValidation::class;
     }
+    public function getEnity()
+    {
+        return $this->model;
+    }
 }

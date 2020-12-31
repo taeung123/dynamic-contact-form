@@ -8,12 +8,12 @@ class ContactFormInputItemValidation extends AbstractValidator
 {
     protected $rules = [
         'RULE_CREATE' => [
-            'label' => ['required'],
-            'value' => ['required'],
+            'label'                 => ['required'],
+            'value'                 => ['required'],
         ],
         'RULE_UPDATE' => [
-            'label' => ['required'],
-            'value' => ['required'],
+            'label'                 => ['required'],
+            'value'                 => ['required'],
         ],
     ];
 }
