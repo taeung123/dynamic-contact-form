@@ -6,22 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use VCComponent\Laravel\ConfigContact\Entites\ContactFormInput;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormValueRepository;
-use VCComponent\Laravel\ConfigContact\Validators\ContactFormValueValidation;
+use VCComponent\Laravel\ConfigContact\Validators\ContactFormValueFrontEndValidation;
 
-class ContactFormValueController extends Controller
+class ContactFormValueFrontEndController extends Controller
 {
     protected $contact_form_value_repository;
-    protected $contact_form_value_validation;
+    protected $contact_form_value_front_end_validation;
 
-    public function __construct(ContactFormValueRepository $contact_form_value_repository, ContactFormValueValidation $contact_form_value_validation)
+    public function __construct(ContactFormValueRepository $contact_form_value_repository, ContactFormValueFrontEndValidation $contact_form_value_front_end_validation)
     {
-        $this->contact_form_value_repository = $contact_form_value_repository;
-        $this->contact_form_value_validation = $contact_form_value_validation;
+        $this->contact_form_value_repository           = $contact_form_value_repository;
+        $this->contact_form_value_front_end_validation = $contact_form_value_front_end_validation;
     }
 
     public function store(Request $request)
     {
-        $this->contact_form_value_validation->isValid($request);
+        $this->contact_form_value_front_end_validation->isValid($request);
 
         $data = $request->all();
         array_shift($data);

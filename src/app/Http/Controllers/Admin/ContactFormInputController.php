@@ -10,8 +10,8 @@ use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputValidationRep
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormRepository;
 use VCComponent\Laravel\ConfigContact\Traits\Helpers;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputItemValidation;
-use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputVaidationValidation;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputValidation;
+use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputValidationValidation;
 use VCComponent\Laravel\Vicoders\Core\Controllers\ApiController;
 use VCComponent\Laravel\Vicoders\Core\Exceptions\PermissionDeniedException;
 
@@ -34,7 +34,7 @@ class ContactFormInputController extends ApiController
         ContactFormInputItemRepository $contact_form_input_item_repository,
         ContactFormInputItemValidation $contact_form_input_item_validation,
         ContactFormInputValidation $contact_form_input_validation,
-        ContactFormInputVaidationValidation $contact_form_input_validation_validation
+        ContactFormInputValidationValidation $contact_form_input_validation_validation
     ) {
         $this->contact_form_repository                  = $contact_form_repository;
         $this->contact_form_input_repository            = $contact_form_input_repository;
@@ -60,8 +60,8 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
-        $data        = $request->all();
-        $data['slug']       = $this->changeLabelToSlug($data['label']);
+        $data         = $request->all();
+        $data['slug'] = $this->changeLabelToSlug($data['label']);
 
         $label_array = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
             $q->where('id', $data['contact_form_id']);

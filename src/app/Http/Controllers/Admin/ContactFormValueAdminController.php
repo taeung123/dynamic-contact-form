@@ -37,17 +37,6 @@ class ContactFormValueAdminController extends ApiController
         return $this->response->paginator($contact_form_value, new $this->contact_form_value_transformer);
     }
 
-    public function show(Request $request, $id)
-    {
-        $contact_form_value = $this->contact_form_value_entity->find($id);
-        if (!$contact_form_value) {
-            throw new Exception('Contact form value not found');
-        }
-        $perpage            = $request->has('per_page') ? $request->get('per_page') : 15;
-        $contact_form_value = $this->contact_form_value_repository->where('contact_form_id', $id)->paginate($perpage);
-        return $this->response->paginator($contact_form_value, $this->contact_form_value_transformer);
-    }
-
     public function update(Request $request, $id)
     {
         $contact_form_value = $this->contact_form_value_entity->find($id);
@@ -68,5 +57,16 @@ class ContactFormValueAdminController extends ApiController
         }
         $this->contact_form_value_repository->destroy($id);
         return $this->success();
+    }
+
+    public function getPayload(Request $request, $id)
+    {
+        $contact_form_value = $this->contact_form_value_repository->where('contact_form_id', $id)->exists();
+        if (!$contact_form_value) {
+            throw new Exception('Contact form not found');
+        }
+        $perpage            = $request->has('per_page') ? $request->get('per_page') : 15;
+        $contact_form_value = $this->contact_form_value_repository->where('contact_form_id', $id)->paginate($perpage);
+        return $this->response->paginator($contact_form_value, $this->contact_form_value_transformer);
     }
 }

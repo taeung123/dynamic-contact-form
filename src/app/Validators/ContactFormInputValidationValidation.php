@@ -4,7 +4,7 @@ namespace VCComponent\Laravel\ConfigContact\Validators;
 
 use VCComponent\Laravel\Vicoders\Core\Validators\AbstractValidator;
 
-class ContactFormInputVaidationValidation extends AbstractValidator
+class ContactFormInputValidationValidation extends AbstractValidator
 {
     protected $rules = [
         'RULE_CREATE' => [
