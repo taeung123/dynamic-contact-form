@@ -11,6 +11,7 @@ trait Helpers
     {
         return str_replace("-", "_", Str::slug($string));
     }
+
     public function changeKey($string)
     {
         if (str_contains($string, ":")) {

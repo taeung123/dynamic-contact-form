@@ -12,6 +12,7 @@ class ContactFormInputTransformer extends TransformerAbstract
         'contactFormInputItems',
         'contactFormInputValidations',
     ];
+
     public function transform(ContactFormInput $model)
     {
         return [
@@ -29,10 +30,12 @@ class ContactFormInputTransformer extends TransformerAbstract
             ],
         ];
     }
+
     public function includeContactFormInputItems(ContactFormInput $model)
     {
         return $this->collection($model->contactFormInputItems, new ContactFormInputItemTransformer);
     }
+
     public function includeContactFormInputValidations(ContactFormInput $model)
     {
         return $this->collection($model->contactFormInputValidations, new ContactFormInputValidationTransformer);

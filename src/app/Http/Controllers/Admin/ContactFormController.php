@@ -41,7 +41,13 @@ class ContactFormController extends ApiController
 
     public function index(Request $request)
     {
-        $perpage      = $request->has('per_page') ? $request->get('per_page') : 15;
+        $perpage = $request->has('per_page') ? $request->get('per_page') : 15;
+        if ($request->has('search')) {
+            $contact_form = $this->contact_form_repository
+                ->orderBy('id', 'desc')
+                ->where("name", "like", "%" . $request->get('search') . "%")
+                ->paginate($perpage);
+        }
         $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->paginate($perpage);
         return $this->response->paginator($contact_form, new $this->contact_form_transformer);
     }
@@ -58,6 +64,12 @@ class ContactFormController extends ApiController
     public function update(Request $request, $id)
     {
         $this->contact_form_validation->isValid($request, 'RULE_UPDATE');
+
+        $contact_form = $this->contact_form_entity->with('contactFormInputs')->find($id);
+        if (!$contact_form) {
+            throw new Exception('Contact form not found');
+        }
+
         $data         = $request->all();
         $data['slug'] = $this->changeLabelToSlug($data['name']);
         $contact_form = $this->contact_form_repository->update($data, $id);
@@ -66,15 +78,19 @@ class ContactFormController extends ApiController
 
     public function destroy($id)
     {
+        $contact_form = $this->contact_form_entity->find($id);
+        if (!$contact_form) {
+            throw new Exception('Contact form not found');
+        }
         $this->contact_form_repository->destroy($id);
         return $this->success();
     }
 
     public function show($id)
     {
-        $contact_form = $this->contact_form_repository->with('contactFormInputs')->find($id);
+        $contact_form = $this->contact_form_entity->with('contactFormInputs')->find($id);
         if (!$contact_form) {
-            throw new Exception('Contact form id ' . $id . ' not found');
+            throw new Exception('Contact form not found');
         }
         return $this->response->item($contact_form, new $this->contact_form_transformer);
     }

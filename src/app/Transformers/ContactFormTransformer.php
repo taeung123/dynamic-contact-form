@@ -10,6 +10,7 @@ class ContactFormTransformer extends TransformerAbstract
     protected $defaultIncludes = [
         'contactFormInputs',
     ];
+
     public function transform(ContactForm $model)
     {
         return [
@@ -23,6 +24,7 @@ class ContactFormTransformer extends TransformerAbstract
             ],
         ];
     }
+
     public function includeContactFormInputs(ContactForm $model)
     {
         return $this->collection($model->contactFormInputs, new ContactFormInputTransformer);

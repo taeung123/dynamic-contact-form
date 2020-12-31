@@ -61,14 +61,15 @@ class ContactFormInputController extends ApiController
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
         $data        = $request->all();
+        $data['slug']       = $this->changeLabelToSlug($data['label']);
+
         $label_array = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
             $q->where('id', $data['contact_form_id']);
         })->pluck('label');
         if (in_array($data['label'], $label_array->toArray())) {
-            throw new Exception('Input label đã tồn tại, nhập label khác');
+            throw new Exception('Input label already exist');
         }
 
-        $data['slug']       = $this->changeLabelToSlug($data['label']);
         $contact_form_input = new ContactFormInput($data);
         $contact_form       = $this->contact_form_repository->find($request->contact_form_id);
         $query              = $contact_form->contactFormInputs()->create($contact_form_input->toArray());
@@ -98,6 +99,11 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_UPDATE');
 
+        $contact_form_input = $this->contact_form_input_entity->find($id);
+        if (!$contact_form_input) {
+            throw new Exception("Input not found");
+        }
+
         $data = $request->all();
 
         $label_current = $this->contact_form_input_repository->find($id)->label;
@@ -109,7 +115,7 @@ class ContactFormInputController extends ApiController
             ->exists();
 
         if ($check_label_exists) {
-            throw new Exception('Input label tồn tại, nhập label khác');
+            throw new Exception('Input label already exist');
         }
 
         $contact_form_input = ContactFormInput::find($id);
@@ -165,6 +171,10 @@ class ContactFormInputController extends ApiController
 
     public function deleteInput($id)
     {
+        $contact_form_input = $this->contact_form_input_entity->find($id);
+        if (!$contact_form_input) {
+            throw new Exception("Input not found");
+        }
         $this->contact_form_input_repository->destroy($id);
         return $this->success();
     }

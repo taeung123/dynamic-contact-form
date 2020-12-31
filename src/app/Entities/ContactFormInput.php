@@ -23,14 +23,17 @@ class ContactFormInput extends Model
     {
         return $this->hasMany(ContactFormInputItem::class);
     }
+
     public function contactFormInputValidations()
     {
         return $this->hasMany(ContactFormInputValidation::class);
     }
+
     public function contactForm()
     {
         return $this->belongsTo(ContactForm::class);
     }
+
     public function ableToUse($user)
     {
         return true;

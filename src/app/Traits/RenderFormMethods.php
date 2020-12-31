@@ -41,6 +41,7 @@ trait RenderFormMethods
             echo $html_foot;
         }
     }
+
     public function renderInputText($input)
     {
         $html = '<div class="form-group ' . $input->slug . '">';
@@ -49,6 +50,7 @@ trait RenderFormMethods
         $html .= '"></div>';
         return $html;
     }
+
     public function renderInputSelect($input)
     {
         $html = '<div class="form-group ' . $input->slug . '">';
@@ -62,6 +64,7 @@ trait RenderFormMethods
         $html .= '</select></div>';
         return $html;
     }
+
     public function renderInputRadio($input)
     {
         $name = $this->changeLabelToSlug($input->label);
@@ -86,6 +89,7 @@ trait RenderFormMethods
         $html .= '</div>';
         return $html;
     }
+
     public function renderInputCheckBox($input)
     {
         $html = '<div class="form-group ' . $input->slug . '">';
