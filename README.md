@@ -90,6 +90,7 @@ The api endpoint should have these format:
 | DELETE    | /api/admin/contact-form-input/{id}              | Destroy     |
 | ------    | ----------------------------------              | --------    |
 | GET       | /api/admin/contact-form-value                   | Index       |
+| GET       | /api/admin/contact-form-value/{id}              | show        |
 | PUT       | /api/admin/contact-form-value/{id}              | Update      |
 | DELETE    | /api/admin/contact-form-value/{id}              | Destroy     |
 | ------    | ----------------------------------              | --------    |
