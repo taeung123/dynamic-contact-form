@@ -48,6 +48,7 @@ class ContactFormValueFrontEndValidation
                 $array_rules = array_combine($array_rule_keys, $array_rule_values_2);
             }
         }
+        // dd($array_rules);
 
         return $array_rules;
     }

@@ -23,18 +23,21 @@ class ContactFormValueFrontEndController extends Controller
     {
         $this->contact_form_value_front_end_validation->isValid($request);
 
-        $data = $request->all();
+        $data            = $request->all();
+        $contact_form_id = $data['contact_form_id'];
         array_shift($data);
         $array_labels = [];
         $array_values = [];
 
         foreach (array_keys($data) as $value) {
-            $query_get_label = ContactFormInput::select('label')->where('slug', $value)->get();
+            $query_get_label = ContactFormInput::select('label')->whereHas('contactForm', function ($q) use ($contact_form_id) {
+                $q->where('id', $contact_form_id);
+            })->where('slug', $value)->get();
+
             foreach ($query_get_label as $key) {
                 array_push($array_labels, $key->label);
             }
         }
-
         foreach ($request->all() as $value) {
             $array_values[] = $value;
         }
