@@ -44,7 +44,6 @@ class ContactFormValueFrontEndController extends Controller
         $contact_form_value_data['contact_form_id'] = $request->contact_form_id;
         $contact_form_value_data['payload']         = json_encode($payload);
         $this->contact_form_value_repository->create($contact_form_value_data);
-
         $message = "Thông tin liên hệ đã được gửi";
         return redirect()->back()->with('success', $message);
     }

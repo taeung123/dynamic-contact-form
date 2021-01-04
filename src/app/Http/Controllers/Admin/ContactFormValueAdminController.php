@@ -36,7 +36,15 @@ class ContactFormValueAdminController extends ApiController
         $contact_form_value = $this->contact_form_value_repository->orderBy('id', 'desc')->paginate($perpage);
         return $this->response->paginator($contact_form_value, new $this->contact_form_value_transformer);
     }
-
+    public function show($id)
+    {
+        $contact_form_value = $this->contact_form_value_entity->find($id);
+        if (!$contact_form_value) {
+            throw new Exception('Contact form value not found');
+        }
+        $contact_form_value = $this->contact_form_value_repository->find($id);
+        return $this->response->item($contact_form_value, new $this->contact_form_value_transformer);
+    }
     public function update(Request $request, $id)
     {
         $contact_form_value = $this->contact_form_value_entity->find($id);

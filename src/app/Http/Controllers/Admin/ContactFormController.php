@@ -88,9 +88,10 @@ class ContactFormController extends ApiController
 
     public function show($id)
     {
-        $contact_form = $this->contact_form_entity->with('contactFormInputs')->find($id);
+        $contact_form = $this->contact_form_entity->has('contactFormInputs')->find($id);
         if (!$contact_form) {
-            throw new Exception('Contact form not found');
+            $contact_form = ['data' => array()];
+            return response()->json($contact_form);
         }
         return $this->response->item($contact_form, new $this->contact_form_transformer);
     }
