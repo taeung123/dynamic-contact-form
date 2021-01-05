@@ -9,7 +9,8 @@ class ContactFormValue extends Model
     protected $fillable = [
         'id',
         'contact_form_id',
-        'payload'
+        'payload',
+        'status'
     ];
 
     public function ableToUse($user)

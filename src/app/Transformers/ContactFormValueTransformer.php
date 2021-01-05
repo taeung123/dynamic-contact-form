@@ -12,6 +12,7 @@ class ContactFormValueTransformer extends TransformerAbstract
             'id'              => $model->id,
             'contact_form_id' => $model->contact_form_id,
             'payload'         => json_decode($model->payload),
+            'status'         => $model->status,
             'timestamp'       => [
                 'created_at' => $model->created_at,
                 'updated_at' => $model->updated_at,

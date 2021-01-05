@@ -17,6 +17,7 @@ class CreateContactFormValuesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('contact_form_id');
             $table->json('payload');
+            $table->string('status');
             $table->foreign('contact_form_id')->references('id')->on('contact_forms')->onDelete('cascade');
             $table->timestamps();
         });

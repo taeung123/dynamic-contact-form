@@ -67,7 +67,7 @@ class ContactFormController extends ApiController
 
         $contact_form = $this->contact_form_entity->with('contactFormInputs')->find($id);
         if (!$contact_form) {
-            throw new Exception('Contact form not found');
+            throw new Exception('Contact form does not exist');
         }
 
         $data         = $request->all();
@@ -80,7 +80,7 @@ class ContactFormController extends ApiController
     {
         $contact_form = $this->contact_form_entity->find($id);
         if (!$contact_form) {
-            throw new Exception('Contact form not found');
+            throw new Exception('Contact form does not exist');
         }
         $this->contact_form_repository->destroy($id);
         return $this->success();

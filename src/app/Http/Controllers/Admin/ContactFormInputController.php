@@ -9,6 +9,7 @@ use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputValidationRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormRepository;
 use VCComponent\Laravel\ConfigContact\Traits\Helpers;
+use VCComponent\Laravel\ConfigContact\Transformer\ContactFormInputTransformer;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputItemValidation;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputValidation;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormInputValidationValidation;
@@ -34,7 +35,8 @@ class ContactFormInputController extends ApiController
         ContactFormInputItemRepository $contact_form_input_item_repository,
         ContactFormInputItemValidation $contact_form_input_item_validation,
         ContactFormInputValidation $contact_form_input_validation,
-        ContactFormInputValidationValidation $contact_form_input_validation_validation
+        ContactFormInputValidationValidation $contact_form_input_validation_validation,
+        ContactFormInputTransformer $contact_form_input_transformer
     ) {
         $this->contact_form_repository                  = $contact_form_repository;
         $this->contact_form_input_repository            = $contact_form_input_repository;
@@ -44,6 +46,7 @@ class ContactFormInputController extends ApiController
         $this->contact_form_input_item_validation       = $contact_form_input_item_validation;
         $this->contact_form_input_validation_validation = $contact_form_input_validation_validation;
         $this->contact_form_input_entity                = $this->contact_form_input_repository->getEntity();
+        $this->contact_form_input_transformer           = $contact_form_input_transformer;
 
         if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
             $user = $this->getAuthenticatedUser();
@@ -56,7 +59,16 @@ class ContactFormInputController extends ApiController
         }
     }
 
-    public function createInput(Request $request)
+    public function show($id)
+    {
+        $contact_form_input = $this->contact_form_input_entity->find($id);
+        if (!$contact_form_input) {
+            throw new Exception("Input does not exist");
+        }
+        $contact_form_input = $this->contact_form_input_repository->find($id);
+        return $this->response->item($contact_form_input, new $this->contact_form_input_transformer);
+    }
+    public function store(Request $request)
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
@@ -66,6 +78,7 @@ class ContactFormInputController extends ApiController
         $label_array = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
             $q->where('id', $data['contact_form_id']);
         })->pluck('label');
+
         if (in_array($data['label'], $label_array->toArray())) {
             throw new Exception('Input label already exist');
         }
@@ -95,21 +108,21 @@ class ContactFormInputController extends ApiController
         return response()->json($data_response);
     }
 
-    public function updateInput(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_UPDATE');
 
         $contact_form_input = $this->contact_form_input_entity->find($id);
         if (!$contact_form_input) {
-            throw new Exception("Input not found");
+            throw new Exception("Input does not exist");
         }
 
         $data = $request->all();
 
         $label_current = $this->contact_form_input_repository->find($id)->label;
 
-        $check_label_exists = $this->contact_form_input_repository->with(['contactForm' => function ($q) use ($data) {
-            $q->where('id', $data['contact_form_id']);}])
+        $check_label_exists = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
+            $q->where('id', $data['contact_form_id']);})
             ->where('label', '=', $data['label'])
             ->where('label', '!=', $label_current)
             ->exists();
@@ -169,11 +182,11 @@ class ContactFormInputController extends ApiController
         return response()->json($data_response);
     }
 
-    public function deleteInput($id)
+    public function destroy($id)
     {
         $contact_form_input = $this->contact_form_input_entity->find($id);
         if (!$contact_form_input) {
-            throw new Exception("Input not found");
+            throw new Exception("Input does not exist");
         }
         $this->contact_form_input_repository->destroy($id);
         return $this->success();
