@@ -42,22 +42,34 @@ class ContactFormController extends ApiController
     public function index(Request $request)
     {
         $perpage = $request->has('per_page') ? $request->get('per_page') : 15;
+
         if ($request->has('search')) {
             $contact_form = $this->contact_form_repository
                 ->orderBy('id', 'desc')
                 ->where("name", "like", "%" . $request->get('search') . "%")
                 ->paginate($perpage);
         }
+
         $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->paginate($perpage);
+
         return $this->response->paginator($contact_form, new $this->contact_form_transformer);
     }
 
     public function store(Request $request)
     {
         $this->contact_form_validation->isValid($request, 'RULE_CREATE');
-        $data         = $request->all();
+        $data = $request->all();
+
+        $check_name_exists = $this->contact_form_repository
+            ->where('name', '=', $data['name'])
+            ->exists();
+        if ($check_name_exists) {
+            throw new Exception('Contact form already exists');
+        }
+
         $data['slug'] = $this->changeLabelToSlug($data['name']);
         $contact_form = $this->contact_form_repository->create($data);
+
         return $this->response->item($contact_form, new $this->contact_form_transformer);
     }
 
@@ -70,29 +82,46 @@ class ContactFormController extends ApiController
             throw new Exception('Contact form does not exist');
         }
 
-        $data         = $request->all();
+        $name_current      = $this->contact_form_repository->find($id)->name;
+        $data              = $request->all();
+        $check_name_exists = $this->contact_form_repository
+            ->where('name', '=', $data['name'])
+            ->where('name', '!=', $name_current)
+            ->exists();
+        if ($check_name_exists) {
+            throw new Exception('Contact form already exist');
+        }
+
         $data['slug'] = $this->changeLabelToSlug($data['name']);
         $contact_form = $this->contact_form_repository->update($data, $id);
+
         return $this->response->item($contact_form, new $this->contact_form_transformer);
     }
 
     public function destroy($id)
     {
         $contact_form = $this->contact_form_entity->find($id);
+
         if (!$contact_form) {
             throw new Exception('Contact form does not exist');
         }
+
         $this->contact_form_repository->destroy($id);
+
         return $this->success();
     }
 
     public function show($id)
     {
-        $contact_form = $this->contact_form_entity->has('contactFormInputs')->find($id);
+        $contact_form = $this->contact_form_entity->with(['contactFormInputs' => function ($q) {
+            $q->orderBy('id', 'desc');
+        }])->find($id);
+
         if (!$contact_form) {
             $contact_form = ['data' => array()];
             return response()->json($contact_form);
         }
+
         return $this->response->item($contact_form, new $this->contact_form_transformer);
     }
 

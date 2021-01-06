@@ -62,11 +62,14 @@ class ContactFormInputController extends ApiController
     public function show($id)
     {
         $contact_form_input = $this->contact_form_input_entity->find($id);
+
         if (!$contact_form_input) {
             throw new Exception("Input does not exist");
         }
+
         $contact_form_input = $this->contact_form_input_repository->find($id);
-        return $this->response->item($contact_form_input, new $this->contact_form_input_transformer);
+
+        return $this->response->item($contact_form_input, $this->contact_form_input_transformer);
     }
     public function store(Request $request)
     {
@@ -105,6 +108,7 @@ class ContactFormInputController extends ApiController
         }
 
         $data_response = $this->contact_form_input_repository->with(['contactFormInputItems', 'contactFormInputValidations'])->find($query->id)->toArray();
+
         return response()->json($data_response);
     }
 
@@ -179,16 +183,20 @@ class ContactFormInputController extends ApiController
         }
 
         $data_response = ContactFormInput::with(['contactFormInputItems', 'contactFormInputValidations'])->find($id)->toArray();
+
         return response()->json($data_response);
     }
 
     public function destroy($id)
     {
         $contact_form_input = $this->contact_form_input_entity->find($id);
+
         if (!$contact_form_input) {
             throw new Exception("Input does not exist");
         }
+
         $this->contact_form_input_repository->destroy($id);
+
         return $this->success();
     }
 }

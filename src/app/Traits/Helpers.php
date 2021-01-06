@@ -18,6 +18,7 @@ trait Helpers
             $pos = strpos($string, ":");
             return substr($string, 0, $pos);
         }
+
         return $string;
     }
 }

@@ -11,6 +11,7 @@ class ContactFormRepositoryEloquent extends BaseRepository implements ContactFor
     {
         return ContactForm::class;
     }
+
     public function getEntity()
     {
         return $this->model;

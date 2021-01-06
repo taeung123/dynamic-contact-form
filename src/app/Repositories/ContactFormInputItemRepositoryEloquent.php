@@ -11,6 +11,7 @@ class ContactFormInputItemRepositoryEloquent extends BaseRepository implements C
     {
         return ContactFormInputItem::class;
     }
+
     public function getEnity()
     {
         return $this->model;
