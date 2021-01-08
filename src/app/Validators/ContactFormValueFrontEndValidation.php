@@ -16,8 +16,8 @@ class ContactFormValueFrontEndValidation
         $id_contact_form = $data['contact_form_id'];
         array_shift($data);
 
-        $array_rules   = $this->getRuleValidate($data, $id_contact_form);
-        $array_alerts  = $this->getAlertValidate($data, $id_contact_form);
+        $array_rules  = $this->getRuleValidate($data, $id_contact_form);
+        $array_alerts = $this->getAlertValidate($data, $id_contact_form);
 
         $validatedData = $request->validate(
             $array_rules,

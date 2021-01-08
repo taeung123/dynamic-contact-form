@@ -4,6 +4,7 @@ namespace VCComponent\Laravel\ConfigContact\Http\Controllers\Admin;
 use Exception;
 use Illuminate\Http\Request;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormRepository;
+use VCComponent\Laravel\ConfigContact\Traits\CheckRequestMethods;
 use VCComponent\Laravel\ConfigContact\Traits\Helpers;
 use VCComponent\Laravel\ConfigContact\Transformers\ContactFormTransformer;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormValidation;
@@ -12,7 +13,7 @@ use VCComponent\Laravel\Vicoders\Core\Exceptions\PermissionDeniedException;
 
 class ContactFormController extends ApiController
 {
-    use Helpers;
+    use Helpers, CheckRequestMethods;
 
     protected $contact_form_transformer;
     protected $contact_form_repository;
@@ -41,18 +42,15 @@ class ContactFormController extends ApiController
 
     public function index(Request $request)
     {
-        $perpage = $request->has('per_page') ? $request->get('per_page') : 15;
+        $query = $this->contact_form_repository;
+        $query = $this->checkStatusRequest($request, $query);
+        $query = $this->checkSearchRequest($request, "name", $query);
+        $query = $query->orderBy('id', 'desc');
+        $query = $this->checkPerPageRequest($request, $query);
 
-        if ($request->has('search')) {
-            $contact_form = $this->contact_form_repository
-                ->orderBy('id', 'desc')
-                ->where("name", "like", "%" . $request->get('search') . "%")
-                ->paginate($perpage);
-        }
+        $contact_form = $query;
 
-        $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->paginate($perpage);
-
-        return $this->response->paginator($contact_form, new $this->contact_form_transformer);
+        return $this->response->paginator($contact_form, $this->contact_form_transformer);
     }
 
     public function store(Request $request)
@@ -64,7 +62,10 @@ class ContactFormController extends ApiController
             ->where('name', '=', $data['name'])
             ->exists();
         if ($check_name_exists) {
-            throw new Exception('Contact form already exists');
+            $data_response = [
+                'data' => ['status' => 'error', 'notifcation' => 'Contact form already exists'],
+            ];
+            return response()->json($data_response);
         }
 
         $data['slug'] = $this->changeLabelToSlug($data['name']);
@@ -125,4 +126,9 @@ class ContactFormController extends ApiController
         return $this->response->item($contact_form, new $this->contact_form_transformer);
     }
 
+    public function list()
+    {
+        $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->get();
+        return $this->response->collection($contact_form, $this->contact_form_transformer);
+    }
 }
