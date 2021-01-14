@@ -1,2 +1,1 @@
-{!!$contact_form->renderContactForm()!!}
-
+{!!$contact_form->renderContactForm($page, $position)!!}
