@@ -100,7 +100,7 @@ class ContactFormValueAdminController extends ApiController
         $contact_form_value = $query;
 
         if ($request->has('search')) {
-            return $this->searchPayload($request);
+            return $this->searchPayload($request, $id);
         }
 
         return $this->response->paginator($contact_form_value, $this->contact_form_value_transformer);
@@ -120,10 +120,10 @@ class ContactFormValueAdminController extends ApiController
         return $this->response->item($contact_form_value, $this->contact_form_value_transformer);
     }
 
-    public function searchPayload(Request $request)
+    public function searchPayload(Request $request, $id)
     {
-        $query    = $this->contact_form_value_repository;
-        $query    = $this->checkStatusRequest($request, $this->contact_form_value_repository);
+        $query    = $this->contact_form_value_repository->where('contact_form_id', $id);
+        $query    = $this->checkStatusRequest($request, $query);
         $payloads = $query->pluck('id', 'payload')->toArray();
         $search   = $request->get('search');
         $per_page = $request->has('per_page') ? $request->get('per_page') : 15;
@@ -145,7 +145,7 @@ class ContactFormValueAdminController extends ApiController
         }
 
         if (count($record_has_search) > 0) {
-            $payloads = $query->whereIn('id', $record_has_search)->paginate($per_page);
+            $payloads = $query->orderBy('id', 'desc')->whereIn('id', $record_has_search)->paginate($per_page);
         } else {
             $payloads = [
                 'data' => [],

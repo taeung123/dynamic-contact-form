@@ -25,9 +25,14 @@ trait Helpers
     public function removeSpecialCharacter($string)
     {
         $string  = preg_replace('/[^\p{L}\p{N}\s]/u', '', strval($string));
-        $search  = array('ă', 'â', 'đ', 'ê', 'ơ', 'ô', 'ư','Â','Ă','Đ','Ê','Ơ','Ô','Ư');
-        $replace = array('a', 'a', 'd', 'e', 'o', 'o', 'u','a','a','d','e','o','o','u');
+        $search  = array('ă', 'â', 'đ', 'ê', 'ơ', 'ô', 'ư', 'Â', 'Ă', 'Đ', 'Ê', 'Ơ', 'Ô', 'Ư');
+        $replace = array('a', 'a', 'd', 'e', 'o', 'o', 'u', 'a', 'a', 'd', 'e', 'o', 'o', 'u');
 
         return str_replace($search, $replace, $string);
+    }
+    public function removeSpaceOfString($string)
+    {
+        $new_string = trim(preg_replace('/\s+/', ' ', $string));
+        return $new_string;
     }
 }

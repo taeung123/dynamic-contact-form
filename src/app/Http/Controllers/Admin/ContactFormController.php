@@ -56,10 +56,10 @@ class ContactFormController extends ApiController
     public function store(Request $request)
     {
         $this->contact_form_validation->isValid($request, 'RULE_CREATE');
-        $data = $request->all();
-
+        $data              = $request->all();
+        $data['slug']      = $this->changeLabelToSlug($data['name']);
         $check_name_exists = $this->contact_form_repository
-            ->where('name', '=', $data['name'])
+            ->where('slug', '=', $data['slug'])
             ->exists();
         if ($check_name_exists) {
             $data_response = [
@@ -68,7 +68,6 @@ class ContactFormController extends ApiController
             return response()->json($data_response);
         }
 
-        $data['slug'] = $this->changeLabelToSlug($data['name']);
         $contact_form = $this->contact_form_repository->create($data);
 
         return $this->response->item($contact_form, new $this->contact_form_transformer);
@@ -85,15 +84,17 @@ class ContactFormController extends ApiController
 
         $name_current      = $this->contact_form_repository->find($id)->name;
         $data              = $request->all();
+        $name              = $this->removeSpaceOfString($data['name']);
         $check_name_exists = $this->contact_form_repository
-            ->where('name', '=', $data['name'])
+            ->where('name', '=', $name)
             ->where('name', '!=', $name_current)
             ->exists();
         if ($check_name_exists) {
             throw new Exception('Contact form already exist');
         }
 
-        $data['slug'] = $this->changeLabelToSlug($data['name']);
+        $data['name'] = $name;
+        $data['slug'] = $this->changeLabelToSlug($name);
         $contact_form = $this->contact_form_repository->update($data, $id);
 
         return $this->response->item($contact_form, new $this->contact_form_transformer);
@@ -126,8 +127,7 @@ class ContactFormController extends ApiController
         return $this->response->item($contact_form, new $this->contact_form_transformer);
     }
 
-    public function list()
-    {
+    function list() {
         $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->get();
         return $this->response->collection($contact_form, $this->contact_form_transformer);
     }

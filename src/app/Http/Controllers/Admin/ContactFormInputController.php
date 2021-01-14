@@ -75,16 +75,15 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
-        $data = $request->all();
-
+        $data         = $request->all();
         $data['slug'] = $this->changeLabelToSlug($data['label']);
 
-        $check_label_exists = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
+        $check_slug_exists = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
             $q->where('id', $data['contact_form_id']);})
-            ->where('label', '=', $data['label'])
+            ->where('slug', '=', $data['slug'])
             ->exists();
 
-        if ($check_label_exists) {
+        if ($check_slug_exists) {
             $data_response = [
                 'data' => ['status' => 'error', 'notifcation' => 'Input label already exists', 'contact_form_id' => $data['contact_form_id']],
             ];
@@ -128,15 +127,15 @@ class ContactFormInputController extends ApiController
 
         $data = $request->all();
 
-        $label_current = $this->contact_form_input_repository->find($id)->label;
-
-        $check_label_exists = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
+        $slug_current      = $this->contact_form_input_repository->find($id)->slug;
+        $slug              = $this->changeLabelToSlug($data['label']);
+        $check_slug_exists = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
             $q->where('id', $data['contact_form_id']);})
-            ->where('label', '=', $data['label'])
-            ->where('label', '!=', $label_current)
+            ->where('slug', '=', $slug)
+            ->where('slug', '!=', $slug_current)
             ->exists();
 
-        if ($check_label_exists) {
+        if ($check_slug_exists) {
             $data_response = [
                 'data' => ['status' => 'error', 'notifcation' => 'Input label already exists', 'contact_form_id' => $data['contact_form_id']],
             ];
@@ -144,10 +143,10 @@ class ContactFormInputController extends ApiController
         }
 
         $contact_form_input = ContactFormInput::find($id);
-        $data['slug']       = $this->changeLabelToSlug($data['label']);
         $contact_form_input->update($data);
 
         $contact_form_input = ContactFormInput::find($id);
+
         if (isset($data["contactFormInputItems"])) {
 
             $contact_form_input->contactFormInputItems()->delete();

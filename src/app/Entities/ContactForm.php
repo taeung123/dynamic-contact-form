@@ -16,6 +16,8 @@ class ContactForm extends Model
         'name',
         'status',
         'slug',
+        'page',
+        'position',
     ];
 
     public function contactFormInputs()
@@ -32,4 +34,5 @@ class ContactForm extends Model
     {
         return true;
     }
+
 }

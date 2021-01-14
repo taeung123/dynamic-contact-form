@@ -7,7 +7,6 @@ trait CheckRequestMethods
 {
     public function checkStatusRequest(Request $request, $query)
     {
-
         if ($request->has('status')) {
             return $query->where('status', $request->get('status'));
         }

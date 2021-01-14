@@ -18,6 +18,8 @@ class ContactFormTransformer extends TransformerAbstract
             'name'      => $model->name,
             'slug'      => $model->slug,
             'status'    => $model->status,
+            'page'      => $model->page,
+            'position'  => $model->position,
             'timestamp' => [
                 'created_at' => $model->created_at,
                 'updated_at' => $model->updated_at,
