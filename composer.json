@@ -1,6 +1,6 @@
 {
     "name": "webpress/dynamic-contact-form",
-    "description": "Contact form input dynamic",
+    "description": "Dynamic-Contact-Form Package for Laravel",
     "authors": [
         {
             "name": "linhnn",
@@ -10,26 +10,28 @@
     "autoload": {
         "classmap": [],
         "psr-4": {
-            "Package\\": "src/app/"
+            "VCComponent\\Laravel\\ConfigContact\\": "src/app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Package\\Test\\": "tests/"
+            "VCComponent\\Laravel\\ConfigContact": "tests/"
         }
     },
-    "require": {},
+    "require": {
+        "webpress/core": "^0.1"
+    },
     "require-dev": {
-        "phpunit/phpunit": "^8.4",
-        "orchestra/testbench": "^4.3",
-        "spatie/phpunit-watcher": "^1.21"
+        "phpunit/phpunit": "8.5.13",
+        "orchestra/testbench": "5.0.0",
+        "spatie/phpunit-watcher": "1.23.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
         "laravel": {
             "providers": [
-                "Package\\Providers\\PackageServiceProvider"
+                "VCComponent\\Laravel\\ConfigContact\\Providers\\ConfigContactServiceProvider"
             ]
         }
     },
