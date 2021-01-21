@@ -56,11 +56,10 @@ class ContactFormController extends ApiController
     public function store(Request $request)
     {
         $this->contact_form_validation->isValid($request, 'RULE_CREATE');
-        $data              = $request->all();
+        $data = $request->all();
+
         $data['slug']      = $this->changeLabelToSlug($data['name']);
-        $check_name_exists = $this->contact_form_repository
-            ->where('slug', '=', $data['slug'])
-            ->exists();
+        $check_name_exists = $this->contact_form_repository->checkBySlug($data['slug']);
         if ($check_name_exists) {
             $data_response = [
                 'data' => ['status' => 'error', 'notifcation' => 'Contact form already exists'],
@@ -76,25 +75,21 @@ class ContactFormController extends ApiController
     public function update(Request $request, $id)
     {
         $this->contact_form_validation->isValid($request, 'RULE_UPDATE');
+        $data = $request->all();
 
         $contact_form = $this->contact_form_entity->with('contactFormInputs')->find($id);
         if (!$contact_form) {
             throw new Exception('Contact form does not exist');
         }
 
-        $name_current      = $this->contact_form_repository->find($id)->name;
-        $data              = $request->all();
-        $name              = $this->removeSpaceOfString($data['name']);
-        $check_name_exists = $this->contact_form_repository
-            ->where('name', '=', $name)
-            ->where('name', '!=', $name_current)
-            ->exists();
-        if ($check_name_exists) {
+        $slug_current      = $this->contact_form_repository->find($id)->slug;
+        $slug              = $this->changeLabelToSlug($data['name']);
+        $check_slug_exists = $this->contact_form_repository->checkBySlug($slug, $slug_current);
+        if ($check_slug_exists) {
             throw new Exception('Contact form already exist');
         }
 
-        $data['name'] = $name;
-        $data['slug'] = $this->changeLabelToSlug($name);
+        $data['slug'] = $slug;
         $contact_form = $this->contact_form_repository->update($data, $id);
 
         return $this->response->item($contact_form, new $this->contact_form_transformer);
@@ -108,7 +103,7 @@ class ContactFormController extends ApiController
             throw new Exception('Contact form does not exist');
         }
 
-        $this->contact_form_repository->destroy($id);
+        $contact_form->destroy($id);
 
         return $this->success();
     }
@@ -130,5 +125,12 @@ class ContactFormController extends ApiController
     function list() {
         $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->get();
         return $this->response->collection($contact_form, $this->contact_form_transformer);
+    }
+
+    public function changeStatus(Request $request, $id)
+    {
+        $data['status'] = $request->status;
+        $contact_form   = $this->contact_form_repository->update($data, $id);
+        return $this->response->item($contact_form, $this->contact_form_transformer);
     }
 }
