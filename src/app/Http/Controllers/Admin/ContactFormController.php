@@ -131,4 +131,11 @@ class ContactFormController extends ApiController
         $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->get();
         return $this->response->collection($contact_form, $this->contact_form_transformer);
     }
+
+    public function changeStatus(Request $request, $id)
+    {
+        $data['status'] = $request->status;
+        $contact_form   = $this->contact_form_repository->update($data, $id);
+        return $this->response->item($contact_form, $this->contact_form_transformer);
+    }
 }
