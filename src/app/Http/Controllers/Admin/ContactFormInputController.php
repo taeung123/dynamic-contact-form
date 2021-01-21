@@ -75,13 +75,9 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
-        $data         = $request->all();
-        $data['slug'] = $this->changeLabelToSlug($data['label']);
-
-        $check_slug_exists = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
-            $q->where('id', $data['contact_form_id']);})
-            ->where('slug', '=', $data['slug'])
-            ->exists();
+        $data              = $request->all();
+        $data['slug']      = $this->changeLabelToSlug($data['label']);
+        $check_slug_exists = $this->contact_form_input_repository->checkBySlug($data['contact_form_id'], $data['slug']);
 
         if ($check_slug_exists) {
             $data_response = [
@@ -125,15 +121,11 @@ class ContactFormInputController extends ApiController
             throw new Exception("Input does not exist");
         }
 
-        $data = $request->all();
+        $data              = $request->all();
 
         $slug_current      = $this->contact_form_input_repository->find($id)->slug;
         $slug              = $this->changeLabelToSlug($data['label']);
-        $check_slug_exists = $this->contact_form_input_repository->whereHas('contactForm', function ($q) use ($data) {
-            $q->where('id', $data['contact_form_id']);})
-            ->where('slug', '=', $slug)
-            ->where('slug', '!=', $slug_current)
-            ->exists();
+        $check_slug_exists = $this->contact_form_input_repository->checkBySlug($data['contact_form_id'], $slug, $slug_current);
 
         if ($check_slug_exists) {
             $data_response = [
@@ -143,6 +135,7 @@ class ContactFormInputController extends ApiController
         }
 
         $contact_form_input = ContactFormInput::find($id);
+        $data['slug']       = $slug;
         $contact_form_input->update($data);
 
         $contact_form_input = ContactFormInput::find($id);
@@ -202,7 +195,7 @@ class ContactFormInputController extends ApiController
             throw new Exception("Input does not exist");
         }
 
-        $this->contact_form_input_repository->destroy($id);
+        $contact_form_input->destroy($id);
 
         return $this->success();
     }
