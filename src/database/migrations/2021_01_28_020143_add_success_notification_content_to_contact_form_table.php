@@ -26,7 +26,7 @@ class AddSuccessNotificationContentToContactFormTable extends Migration
     public function down()
     {
         Schema::table('contact_forms', function (Blueprint $table) {
-            $table->dropColumn('column');
+            $table->dropColumn('success_notification_content');
         });
     }
 }
