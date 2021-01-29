@@ -1,5 +1,5 @@
 <div class="form-group col-12 col-md-{{$input->column}} {{$input->slug}}">
-    <label for="">{{$input->label}}:</label>
+    <label for="">{!!$input->label!!}:</label>
     <div class="upload-btn-wrapper">
         <p class="btn">
          Chọn tệp tin
