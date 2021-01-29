@@ -18,6 +18,8 @@ class ContactForm extends Model
         'slug',
         'page',
         'position',
+        'success_notification_content',
+        'submit_button_content',
     ];
 
     public function contactFormInputs()
