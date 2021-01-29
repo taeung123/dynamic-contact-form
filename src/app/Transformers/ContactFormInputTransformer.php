@@ -24,6 +24,7 @@ class ContactFormInputTransformer extends TransformerAbstract
             'order'           => $model->order,
             'note'            => $model->note,
             'placeholder'     => $model->placeholder,
+            'column'          => $model->column,
             'timestamp'       => [
                 'created_at' => $model->created_at,
                 'updated_at' => $model->updated_at,

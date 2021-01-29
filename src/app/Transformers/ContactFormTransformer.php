@@ -14,15 +14,17 @@ class ContactFormTransformer extends TransformerAbstract
     public function transform(ContactForm $model)
     {
         return [
-            'id'          => $model->id,
-            'name'        => $model->name,
-            'slug'        => $model->slug,
-            'status'      => $model->status,
-            'page'        => $model->page,
-            'position'    => $model->position,
-            'page_vn'     => $this->translatePage($model->page),
-            'position_vn' => $this->translatePosition($model->page, $model->position),
-            'timestamp'   => [
+            'id'                           => $model->id,
+            'name'                         => $model->name,
+            'slug'                         => $model->slug,
+            'status'                       => $model->status,
+            'page'                         => $model->page,
+            'position'                     => $model->position,
+            'success_notification_content' => $model->success_notification_content,
+            'submit_button_content'        => $model->submit_button_content,
+            'page_vn'                      => $this->translatePage($model->page),
+            'position_vn'                  => $this->translatePosition($model->page, $model->position),
+            'timestamp'                    => [
                 'created_at' => $model->created_at,
                 'updated_at' => $model->updated_at,
             ],

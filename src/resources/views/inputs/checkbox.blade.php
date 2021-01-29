@@ -1,5 +1,5 @@
-<div class="form-group {{$input->slug}}">
-    <label for="">{{ $input->label}}:</label>
+<div class="form-group col-12 col-md-{{$input->column}} {{$input->slug}}">
+    <label for="">{!! $input->label !!}:</label>
     <div class="checkbox">
         @if ($input->contactFormInputItems->count() > 0)
         @foreach ($input->contactFormInputItems as $item)

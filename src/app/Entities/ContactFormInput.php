@@ -3,9 +3,10 @@
 namespace VCComponent\Laravel\ConfigContact\Entites;
 
 use Illuminate\Database\Eloquent\Model;
+use VCComponent\Laravel\ConfigContact\Entites\ContactForm;
 use VCComponent\Laravel\ConfigContact\Entites\ContactFormInputItem;
 use VCComponent\Laravel\ConfigContact\Entites\ContactFormInputValidation;
-use VCComponent\Laravel\ConfigContact\Entites\ContactForm;
+
 class ContactFormInput extends Model
 {
     protected $fillable = [
@@ -14,6 +15,7 @@ class ContactFormInput extends Model
         'label',
         'slug',
         'order',
+        'column',
         'type_input',
         'note',
         'placeholder',

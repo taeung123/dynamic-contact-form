@@ -79,21 +79,21 @@ class ContactFormValueAdminController extends ApiController
             throw new Exception('Contact form value does not exist');
         }
 
-        $this->contact_form_value_repository->destroy($id);
+        $contact_form_value->destroy($id);
 
         return $this->success();
     }
 
     public function getPayload(Request $request, $id)
     {
-        $contact_form_value = $this->contact_form_value_repository->where('contact_form_id', $id)->exists();
+        $contact_form_value = $this->contact_form_value_entity->where('contact_form_id', $id)->exists();
 
         if (!$contact_form_value) {
             $contact_form_value = ['data' => array()];
             return response()->json($contact_form_value);
         }
 
-        $query              = $this->contact_form_value_repository;
+        $query              = $this->contact_form_value_entity;
         $query              = $this->checkStatusRequest($request, $query);
         $query              = $query->where('contact_form_id', $id)->orderBy('id', 'desc');
         $query              = $this->checkPerPageRequest($request, $query);
@@ -122,7 +122,7 @@ class ContactFormValueAdminController extends ApiController
 
     public function searchPayload(Request $request, $id)
     {
-        $query    = $this->contact_form_value_repository->where('contact_form_id', $id);
+        $query    = $this->contact_form_value_entity->where('contact_form_id', $id);
         $query    = $this->checkStatusRequest($request, $query);
         $payloads = $query->pluck('id', 'payload')->toArray();
         $search   = $request->get('search');
