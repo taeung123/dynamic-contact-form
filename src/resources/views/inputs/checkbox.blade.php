@@ -5,12 +5,12 @@
         @foreach ($input->contactFormInputItems as $item)
         <label>
             <input type="checkbox" name="{{$input->slug}}[]" value="{{$item->value}}">
-            {{ $item->label}}
+            {!!$item->label!!}
         </label>
         @endforeach
         @endif
         <input type="checkbox" name="{{$input->slug}}[]" value="" hidden checked>
     </div><small id="{{$input->slug}}" class="form-text text-muted">
-        {{$input->note}}
+        {!!$input->note!!}
     </small>
 </div>
