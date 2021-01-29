@@ -13,7 +13,6 @@ trait RenderFormMethods
                 $q->orderBy('order');
             }]);
         }])->latest()->first();
-
         if ($contact_form) {
 
             echo view('contact_form::form.header-form', ['contact_form' => $contact_form]);
@@ -43,9 +42,13 @@ trait RenderFormMethods
                 if ($input->type_input === "date") {
                     echo view('contact_form::inputs.date', ['input' => $input]);
                 }
+
+                if ($input->type_input === "file") {
+                    echo view('contact_form::inputs.file', ['input' => $input]);
+                }
             }
 
-            echo view('contact_form::form.footer-form');
+            echo view('contact_form::form.footer-form', ['contact_form' => $contact_form]);
         }
     }
 }

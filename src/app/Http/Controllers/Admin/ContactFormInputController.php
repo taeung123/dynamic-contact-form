@@ -76,6 +76,7 @@ class ContactFormInputController extends ApiController
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
         $data              = $request->all();
+        // dd($data);
         $data['slug']      = $this->changeLabelToSlug($data['label']);
         $check_slug_exists = $this->contact_form_input_repository->checkBySlug($data['contact_form_id'], $data['slug']);
 

@@ -22,6 +22,6 @@ class ContactFormRepositoryEloquent extends BaseRepository implements ContactFor
         if ($slug_current === null) {
             return $this->getEntity()->where('slug', '=', $slug)->exists();
         }
-        return $this->getEntity()->where('slug', '=', $slug)->where('slug', '=', $slug_current)->exists();
+        return $this->getEntity()->where('slug', '=', $slug)->where('slug', '!=', $slug_current)->exists();
     }
 }

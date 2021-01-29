@@ -1,4 +1,4 @@
-<div class="radio  {{$input->slug}}">
+<div class="radio  col-12 col-md-{{$input->column}} {{$input->slug}}">
     <label>{{$input->label}}<label>
 
             @if ($input->contactFormInputItems->count() > 0)

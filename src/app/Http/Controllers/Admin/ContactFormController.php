@@ -42,7 +42,7 @@ class ContactFormController extends ApiController
 
     public function index(Request $request)
     {
-        $query = $this->contact_form_repository;
+        $query = $this->contact_form_entity;
         $query = $this->checkStatusRequest($request, $query);
         $query = $this->checkSearchRequest($request, "name", $query);
         $query = $query->orderBy('id', 'desc');
@@ -88,7 +88,6 @@ class ContactFormController extends ApiController
         if ($check_slug_exists) {
             throw new Exception('Contact form already exist');
         }
-
         $data['slug'] = $slug;
         $contact_form = $this->contact_form_repository->update($data, $id);
 
@@ -111,7 +110,7 @@ class ContactFormController extends ApiController
     public function show($id)
     {
         $contact_form = $this->contact_form_entity->with(['contactFormInputs' => function ($q) {
-            $q->orderBy('id', 'desc');
+            $q->orderBy('order');
         }])->find($id);
 
         if (!$contact_form) {
@@ -123,7 +122,7 @@ class ContactFormController extends ApiController
     }
 
     function list() {
-        $contact_form = $this->contact_form_repository->orderBy('id', 'desc')->get();
+        $contact_form = $this->contact_form_entity->orderBy('id', 'desc')->get();
         return $this->response->collection($contact_form, $this->contact_form_transformer);
     }
 
