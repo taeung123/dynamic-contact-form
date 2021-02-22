@@ -63,7 +63,7 @@ class ContactFormValueFrontEndController extends Controller
         $contact_form_value_data['status']          = "2";
         $this->contact_form_value_repository->create($contact_form_value_data);
 
-        $message = $this->contact_form_entity->select('success_notification_content')->where('id', $contact_form_id)->first()->succes_notification_content;
+        $message = $this->contact_form_entity->select('success_notification_content')->where('id', $contact_form_id)->first()->success_notification_content;
         return redirect()->back()->with('success', $message);
     }
 }
