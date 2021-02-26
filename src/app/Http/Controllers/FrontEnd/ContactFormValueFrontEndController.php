@@ -2,8 +2,10 @@
 
 namespace VCComponent\Laravel\ConfigContact\Http\Controllers\FrontEnd;
 
+use VCComponent\Laravel\ConfigContact\Events\sendMail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use VCComponent\Laravel\ConfigContact\Entites\ContactFormInput;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormValueRepository;
@@ -62,6 +64,9 @@ class ContactFormValueFrontEndController extends Controller
         $contact_form_value_data['payload']         = json_encode($payload);
         $contact_form_value_data['status']          = "2";
         $this->contact_form_value_repository->create($contact_form_value_data);
+
+        $contact_form_data = $this->contact_form_entity->select('name', 'position')->where('id', $contact_form_id)->first();
+        event(new sendMail($contact_form_data->name, $contact_form_data->position));
 
         $message = $this->contact_form_entity->select('success_notification_content')->where('id', $contact_form_id)->first()->success_notification_content;
         return redirect()->back()->with('success', $message);
