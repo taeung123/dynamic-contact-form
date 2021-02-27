@@ -63,10 +63,10 @@ class ContactFormValueFrontEndController extends Controller
         $contact_form_value_data['contact_form_id'] = $request->contact_form_id;
         $contact_form_value_data['payload']         = json_encode($payload);
         $contact_form_value_data['status']          = "2";
-        $this->contact_form_value_repository->create($contact_form_value_data);
 
+        $contact_form_value = $this->contact_form_value_repository->create($contact_form_value_data);
         $contact_form_data = $this->contact_form_entity->where('id', $contact_form_id)->first();
-        event(new DynamicFormSubmittedEvent($contact_form_data));
+        event(new DynamicFormSubmittedEvent($contact_form_data, $contact_form_value));
 
         $message = $this->contact_form_entity->select('success_notification_content')->where('id', $contact_form_id)->first()->success_notification_content;
         return redirect()->back()->with('success', $message);

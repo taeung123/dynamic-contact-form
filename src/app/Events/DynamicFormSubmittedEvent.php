@@ -15,14 +15,16 @@ class DynamicFormSubmittedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $contact_form_data;
+    public $contact_form_value;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($contact_form_data)
+    public function __construct($contact_form_data, $contact_form_value)
     {
         $this->contact_form_data = $contact_form_data;
+        $this->$contact_form_value = $$contact_form_value;
     }
 
     /**
