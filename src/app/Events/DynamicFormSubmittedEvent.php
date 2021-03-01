@@ -24,7 +24,7 @@ class DynamicFormSubmittedEvent
     public function __construct($contact_form_data, $contact_form_value)
     {
         $this->contact_form_data = $contact_form_data;
-        $this->$contact_form_value = $contact_form_value;
+        $this->contact_form_value = $contact_form_value;
     }
 
     /**
