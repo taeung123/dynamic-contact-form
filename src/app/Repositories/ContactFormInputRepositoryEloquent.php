@@ -9,7 +9,11 @@ class ContactFormInputRepositoryEloquent extends BaseRepository implements Conta
 {
     public function model()
     {
-        return ContactFormInput::class;
+        if (isset(config('dynamic-contact-form.models')['contact_form_input'])) {
+            return config('dynamic-contact-form.models.contact_form_input');
+        } else {
+            return ContactFormInput::class;
+        }
     }
 
     public function getEntity()
