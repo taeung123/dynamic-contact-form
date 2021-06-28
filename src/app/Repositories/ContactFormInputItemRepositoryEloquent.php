@@ -9,7 +9,11 @@ class ContactFormInputItemRepositoryEloquent extends BaseRepository implements C
 {
     public function model()
     {
-        return ContactFormInputItem::class;
+        if (isset(config('dynamic-contact-form.models')['contact_form_input_item'])) {
+            return config('dynamic-contact-form.models.contact_form_input_item');
+        } else {
+            return ContactFormInputItem::class;
+        }
     }
 
     public function getEnity()
