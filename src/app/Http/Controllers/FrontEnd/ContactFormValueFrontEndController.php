@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use VCComponent\Laravel\ConfigContact\Entites\ContactFormInput;
+use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormValueRepository;
 use VCComponent\Laravel\ConfigContact\Validators\ContactFormValueFrontEndValidation;
@@ -17,14 +18,17 @@ class ContactFormValueFrontEndController extends Controller
     protected $contact_form_value_front_end_validation;
     protected $contact_form_repository;
     protected $contact_form_entity;
+    protected $contact_form_input_entity;
     public function __construct(
         ContactFormValueRepository $contact_form_value_repository,
         ContactFormValueFrontEndValidation $contact_form_value_front_end_validation,
-        ContactFormRepository $contact_form_repository
+        ContactFormRepository $contact_form_repository,
+        ContactFormInputRepository $contact_form_input
     ) {
         $this->contact_form_value_repository           = $contact_form_value_repository;
         $this->contact_form_value_front_end_validation = $contact_form_value_front_end_validation;
         $this->contact_form_entity                     = $contact_form_repository->getEntity();
+        $this->contact_form_input_entity               = $contact_form_input->getEntity();
     }
 
     public function store(Request $request)
@@ -38,7 +42,7 @@ class ContactFormValueFrontEndController extends Controller
         $array_values = [];
 
         foreach (array_keys($data) as $value) {
-            $query_get_label = ContactFormInput::select('label')->whereHas('contactForm', function ($q) use ($contact_form_id) {
+            $query_get_label = $this->contact_form_input_entity::select('label')->whereHas('contactForm', function ($q) use ($contact_form_id) {
                 $q->where('id', $contact_form_id);
             })->where('slug', $value)->get();
 

@@ -9,7 +9,11 @@ class ContactFormInputValidationRepositoryEloquent extends BaseRepository implem
 {
     public function model()
     {
-        return ContactFormInputValidation::class;
+        if (isset(config('dynamic-contact-form.models')['contact_form_input_validation'])) {
+            return config('dynamic-contact-form.models.contact_form_input_validation');
+        } else {
+            return ContactFormInputValidation::class;
+        }
     }
 
     public function getEnity()

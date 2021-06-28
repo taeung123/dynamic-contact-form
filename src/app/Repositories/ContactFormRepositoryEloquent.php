@@ -9,7 +9,11 @@ class ContactFormRepositoryEloquent extends BaseRepository implements ContactFor
 {
     public function model()
     {
-        return ContactForm::class;
+        if (isset(config('dynamic-contact-form.models')['contact_form'])) {
+            return config('dynamic-contact-form.models.contact_form');
+        } else {
+            return ContactForm::class;
+        }
     }
 
     public function getEntity()
