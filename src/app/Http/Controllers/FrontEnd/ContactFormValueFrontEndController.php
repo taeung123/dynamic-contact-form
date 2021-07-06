@@ -29,6 +29,12 @@ class ContactFormValueFrontEndController extends Controller
         $this->contact_form_value_front_end_validation = $contact_form_value_front_end_validation;
         $this->contact_form_entity                     = $contact_form_repository->getEntity();
         $this->contact_form_input_entity               = $contact_form_input->getEntity();
+
+        if (!empty(config('dynamic-contact-form.auth_middleware.frontend'))) {
+            foreach (config('dynamic-contact-form.auth_middleware.frontend') as $middleware) {
+                $this->middleware($middleware['middleware'], ['except' => $middleware['except']]);
+            }
+        }
     }
 
     public function store(Request $request)
