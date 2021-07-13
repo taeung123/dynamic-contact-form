@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('api')->prefix('api/admin')->namespace('VCComponent\Laravel\ConfigContact\Http\Controllers\Admin')->group(function () {
     Route::resources(['contact-form' => 'ContactFormController']);
 
-    Route::put('contact-form/{id}/change-status' , 'ContactFormController@changeStatus');
+    Route::put('contact-form/{id}/change-status', 'ContactFormController@changeStatus');
 
     Route::get('contact-forms/list', 'ContactFormController@list');
 

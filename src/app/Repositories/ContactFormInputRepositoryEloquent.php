@@ -21,7 +21,6 @@ class ContactFormInputRepositoryEloquent extends BaseRepository implements Conta
         return $this->model;
     }
 
-
     public function checkBySlug($contact_form_id, $slug, $slug_current = null)
     {
         if ($slug_current === null) {
