@@ -26,16 +26,39 @@ class ContactFormValueTest extends TestCase
     /**
      * @test
      */
+    public function should_not_get_contact_form_value_item_not_exists_admin()
+    {
+        factory(ContactFormValue::class)->create();
+        $response = $this->json('GET', 'api/admin/contact-form-value/2');
+        $response->assertStatus(500);
+        $response->assertJson(["message" => "Server Error"]);
+    }
+    /**
+     * @test
+     */
     public function should_get_contact_form_value_item_admin()
     {
         $contactFormValue = factory(ContactFormValue::class)->create();
-        $response = $this->call('GET', 'api/admin/contact-form-value/' . $contactFormValue->id);
+        $response = $this->json('GET', 'api/admin/contact-form-value/' . $contactFormValue->id);
         $response->assertStatus(200);
         $response->assertJson([
             'contact_form_id' => $contactFormValue->contact_form_id,
             'payload' => $contactFormValue->payload,
             'status' => $contactFormValue->status,
         ]);
+    }
+    /**
+     * @test
+     */
+    public function should_not_update_contact_form_value_not_exists_admin()
+    {
+        $contactFormValue = factory(ContactFormValue::class)->create();
+        $contactFormValue->payload = ['email' => 'test@gmail.com'];
+        $data = $contactFormValue->toArray();
+        $response = $this->json('PUT', 'api/admin/contact-form-value/2', $data);
+        $response->assertStatus(500);
+        $response->assertJson(["message" => "Server Error"]);
+
     }
     /**
      * @test
@@ -65,10 +88,25 @@ class ContactFormValueTest extends TestCase
         unset($contactFormValue['updated_at']);
         unset($contactFormValue['created_at']);
         $this->assertDatabaseHas('contact_form_values', $contactFormValue);
-        $response = $this->call('DELETE', 'api/admin/contact-form-value/' . $contactFormValue['id']);
+        $response = $this->json('DELETE', 'api/admin/contact-form-value/' . $contactFormValue['id']);
         $response->assertStatus(200);
         $response->assertJson(['success' => true]);
         $this->assertDeleted('contact_form_values', $contactFormValue);
+    }
+    /**
+     * @test
+     */
+    public function should_not_update_status_contact_form_input_required_admin()
+    {
+        $contactFormValue = factory(ContactFormValue::class)->create()->toArray();
+        unset($contactFormValue['updated_at']);
+        unset($contactFormValue['created_at']);
+        $this->assertDatabaseHas('contact_form_values', $contactFormValue);
+        $data = ['status' => ''];
+        $response = $this->json('PUT', 'api/admin/contact-form-value/' . $contactFormValue['id'] . '/status', $data);
+        $response->assertStatus(500);
+        $response->assertJson(["message" => "Server Error"]);
+
     }
     /**
      * @test
@@ -86,6 +124,34 @@ class ContactFormValueTest extends TestCase
         $response->assertJson(['status' => 2]);
     }
 
+    /**
+     * @test
+     */
+    public function should_get_contact_form_list_with_status_admin()
+    {
+        $contactForm = factory(ContactForm::class)->create();
+        $contactFormValue = factory(ContactFormValue::class, 5)->create(['status' => 2]);
+        factory(ContactFormValue::class, 5)->create(['status' => 1]);
+        $contactFormValueMiss = factory(ContactFormValue::class)->create(['contact_form_id' => 2]);
+        $contactFormValue = $contactFormValue->map(function ($e) {
+            unset($e['updated_at']);
+            unset($e['created_at']);
+            return $e;
+        })->toArray();
+        $response = $this->json('GET', 'api/admin/contact-form/' . $contactForm->id . '/contact-form-value?status=2');
+        $response->assertStatus(200);
+        foreach ($contactFormValue as $item) {
+            $response->assertJsonFragment([
+                'payload' => $item['payload'],
+                'status' => "2",
+            ]);
+        }
+        $response->assertJsonMissing([
+            'payload' => $contactFormValueMiss->payload,
+            'status' => "1",
+        ]);
+
+    }
     /**
      * @test
      */
