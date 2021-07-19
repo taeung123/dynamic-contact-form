@@ -3,7 +3,6 @@
 namespace VCComponent\Laravel\ConfigContact\Validators;
 
 use Illuminate\Http\Request;
-use VCComponent\Laravel\ConfigContact\Entites\ContactFormInput;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputRepository;
 use VCComponent\Laravel\ConfigContact\Traits\Helpers;
 
@@ -13,17 +12,18 @@ class ContactFormValueFrontEndValidation
 
     protected $contact_form_input;
 
-    public function __construct(ContactFormInputRepository $contact_form_input) {
+    public function __construct(ContactFormInputRepository $contact_form_input)
+    {
         $this->contact_form_input = $contact_form_input->getEntity();
     }
 
     public function isValid(Request $request)
     {
-        $data            = $request->all();
+        $data = $request->all();
         $id_contact_form = $data['contact_form_id'];
         array_shift($data);
 
-        $array_rules  = $this->getRuleValidate($data, $id_contact_form);
+        $array_rules = $this->getRuleValidate($data, $id_contact_form);
         $array_alerts = $this->getAlertValidate($data, $id_contact_form);
 
         $validatedData = $request->validate(
@@ -35,7 +35,7 @@ class ContactFormValueFrontEndValidation
     public function getRuleValidate($data, $id_contact_form)
     {
         $array_rules = [];
-        $index       = 0;
+        $index = 0;
 
         foreach (array_keys($data) as $value) {
             $get_validations = $this->contact_form_input->whereHas('contactForm', function ($q) use ($id_contact_form) {
@@ -76,7 +76,7 @@ class ContactFormValueFrontEndValidation
 
             if ($get_validations->contactFormInputValidations->count() > 0) {
                 foreach ($get_validations->contactFormInputValidations as $key => $validation) {
-                    $key_after_change                = $this->changeKey($get_validations->slug . "." . $validation->validation_name);
+                    $key_after_change = $this->changeKey($get_validations->slug . "." . $validation->validation_name);
                     $array_alerts[$key_after_change] = $get_validations->label . " " . $validation->validation_value;
                 }
             }

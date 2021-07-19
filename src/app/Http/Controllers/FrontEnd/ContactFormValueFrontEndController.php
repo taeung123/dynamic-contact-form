@@ -2,11 +2,10 @@
 
 namespace VCComponent\Laravel\ConfigContact\Http\Controllers\FrontEnd;
 
-use VCComponent\Laravel\ConfigContact\Events\DynamicFormSubmittedEvent;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Event;
-use VCComponent\Laravel\ConfigContact\Entites\ContactFormInput;
+use VCComponent\Laravel\ConfigContact\Events\DynamicFormSubmittedEvent;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormValueRepository;
@@ -25,10 +24,10 @@ class ContactFormValueFrontEndController extends Controller
         ContactFormRepository $contact_form_repository,
         ContactFormInputRepository $contact_form_input
     ) {
-        $this->contact_form_value_repository           = $contact_form_value_repository;
+        $this->contact_form_value_repository = $contact_form_value_repository;
         $this->contact_form_value_front_end_validation = $contact_form_value_front_end_validation;
-        $this->contact_form_entity                     = $contact_form_repository->getEntity();
-        $this->contact_form_input_entity               = $contact_form_input->getEntity();
+        $this->contact_form_entity = $contact_form_repository->getEntity();
+        $this->contact_form_input_entity = $contact_form_input->getEntity();
 
         if (!empty(config('dynamic-contact-form.auth_middleware.frontend'))) {
             foreach (config('dynamic-contact-form.auth_middleware.frontend') as $middleware) {
@@ -39,9 +38,10 @@ class ContactFormValueFrontEndController extends Controller
 
     public function store(Request $request)
     {
+
         $this->contact_form_value_front_end_validation->isValid($request);
 
-        $data            = $request->all();
+        $data = $request->all();
         $contact_form_id = $data['contact_form_id'];
         array_shift($data);
         $array_labels = [];
@@ -58,10 +58,10 @@ class ContactFormValueFrontEndController extends Controller
         }
 
         if ($request->hasFile('tep_dinh_kem')) {
-            $file      = $request->tep_dinh_kem;
+            $file = $request->tep_dinh_kem;
             $file_name = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('/uploads/files'), $file_name);
-            $http                 = $_SERVER['HTTP_ORIGIN'];
+            $http = $_SERVER['HTTP_ORIGIN'];
             $data['tep_dinh_kem'] = $http . '/uploads/files/' . $file_name;
         }
 
@@ -69,10 +69,10 @@ class ContactFormValueFrontEndController extends Controller
             $array_values[] = $value;
         }
 
-        $payload                                    = array_combine($array_labels, $array_values);
+        $payload = array_combine($array_labels, $array_values);
         $contact_form_value_data['contact_form_id'] = $request->contact_form_id;
-        $contact_form_value_data['payload']         = json_encode($payload);
-        $contact_form_value_data['status']          = "2";
+        $contact_form_value_data['payload'] = json_encode($payload);
+        $contact_form_value_data['status'] = "2";
 
         $contact_form_value = $this->contact_form_value_repository->create($contact_form_value_data);
         $contact_form_data = $this->contact_form_entity->where('id', $contact_form_id)->first();
