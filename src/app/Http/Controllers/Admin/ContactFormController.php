@@ -24,10 +24,10 @@ class ContactFormController extends ApiController
         ContactFormRepository $contact_form_repository,
         ContactFormTransformer $contact_form_transformer,
         ContactFormValidation $contact_form_validation) {
-        $this->contact_form_repository  = $contact_form_repository;
+        $this->contact_form_repository = $contact_form_repository;
         $this->contact_form_transformer = $contact_form_transformer;
-        $this->contact_form_validation  = $contact_form_validation;
-        $this->contact_form_entity      = $contact_form_repository->getEntity();
+        $this->contact_form_validation = $contact_form_validation;
+        $this->contact_form_entity = $contact_form_repository->getEntity();
 
         if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
             $user = $this->getAuthenticatedUser();
@@ -58,7 +58,7 @@ class ContactFormController extends ApiController
         $this->contact_form_validation->isValid($request, 'RULE_CREATE');
         $data = $request->all();
 
-        $data['slug']      = $this->changeLabelToSlug($data['name']);
+        $data['slug'] = $this->changeLabelToSlug($data['name']);
         $check_name_exists = $this->contact_form_repository->checkBySlug($data['slug']);
         if ($check_name_exists) {
             $data_response = [
@@ -82,8 +82,8 @@ class ContactFormController extends ApiController
             throw new Exception('Contact form does not exist');
         }
 
-        $slug_current      = $this->contact_form_repository->find($id)->slug;
-        $slug              = $this->changeLabelToSlug($data['name']);
+        $slug_current = $this->contact_form_repository->find($id)->slug;
+        $slug = $this->changeLabelToSlug($data['name']);
         $check_slug_exists = $this->contact_form_repository->checkBySlug($slug, $slug_current);
         if ($check_slug_exists) {
             throw new Exception('Contact form already exist');
@@ -129,7 +129,7 @@ class ContactFormController extends ApiController
     public function changeStatus(Request $request, $id)
     {
         $data['status'] = $request->status;
-        $contact_form   = $this->contact_form_repository->update($data, $id);
+        $contact_form = $this->contact_form_repository->update($data, $id);
         return $this->response->item($contact_form, $this->contact_form_transformer);
     }
 }

@@ -38,15 +38,15 @@ class ContactFormInputController extends ApiController
         ContactFormInputValidationValidation $contact_form_input_validation_validation,
         ContactFormInputTransformer $contact_form_input_transformer
     ) {
-        $this->contact_form_repository                  = $contact_form_repository;
-        $this->contact_form_input_repository            = $contact_form_input_repository;
+        $this->contact_form_repository = $contact_form_repository;
+        $this->contact_form_input_repository = $contact_form_input_repository;
         $this->contact_form_input_validation_repository = $contact_form_input_Validation_repository;
-        $this->contact_form_input_item_repository       = $contact_form_input_item_repository;
-        $this->contact_form_input_validation            = $contact_form_input_validation;
-        $this->contact_form_input_item_validation       = $contact_form_input_item_validation;
+        $this->contact_form_input_item_repository = $contact_form_input_item_repository;
+        $this->contact_form_input_validation = $contact_form_input_validation;
+        $this->contact_form_input_item_validation = $contact_form_input_item_validation;
         $this->contact_form_input_validation_validation = $contact_form_input_validation_validation;
-        $this->contact_form_input_entity                = $this->contact_form_input_repository->getEntity();
-        $this->contact_form_input_transformer           = $contact_form_input_transformer;
+        $this->contact_form_input_entity = $this->contact_form_input_repository->getEntity();
+        $this->contact_form_input_transformer = $contact_form_input_transformer;
 
         if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
             $user = $this->getAuthenticatedUser();
@@ -75,9 +75,8 @@ class ContactFormInputController extends ApiController
     {
         $this->contact_form_input_validation->isValid($request, 'RULE_CREATE');
 
-        $data              = $request->all();
-        // dd($data);
-        $data['slug']      = $this->changeLabelToSlug($data['label']);
+        $data = $request->all();
+        $data['slug'] = $this->changeLabelToSlug($data['label']);
         $check_slug_exists = $this->contact_form_input_repository->checkBySlug($data['contact_form_id'], $data['slug']);
 
         if ($check_slug_exists) {
@@ -88,8 +87,8 @@ class ContactFormInputController extends ApiController
         }
 
         $contact_form_input = new ContactFormInput($data);
-        $contact_form       = $this->contact_form_repository->find($request->contact_form_id);
-        $query              = $contact_form->contactFormInputs()->create($contact_form_input->toArray());
+        $contact_form = $this->contact_form_repository->find($request->contact_form_id);
+        $query = $contact_form->contactFormInputs()->create($contact_form_input->toArray());
 
         $contact_form_input = $this->contact_form_input_repository->find($query->id);
 
@@ -122,10 +121,10 @@ class ContactFormInputController extends ApiController
             throw new Exception("Input does not exist");
         }
 
-        $data              = $request->all();
+        $data = $request->all();
 
-        $slug_current      = $this->contact_form_input_repository->find($id)->slug;
-        $slug              = $this->changeLabelToSlug($data['label']);
+        $slug_current = $this->contact_form_input_repository->find($id)->slug;
+        $slug = $this->changeLabelToSlug($data['label']);
         $check_slug_exists = $this->contact_form_input_repository->checkBySlug($data['contact_form_id'], $slug, $slug_current);
 
         if ($check_slug_exists) {
@@ -136,7 +135,7 @@ class ContactFormInputController extends ApiController
         }
 
         $contact_form_input = ContactFormInput::find($id);
-        $data['slug']       = $slug;
+        $data['slug'] = $slug;
         $contact_form_input->update($data);
 
         $contact_form_input = ContactFormInput::find($id);
@@ -158,7 +157,7 @@ class ContactFormInputController extends ApiController
                     [
                         'label' => $item['label'],
                         "order" => $item['order'],
-                        'slug'  => $item['slug'],
+                        'slug' => $item['slug'],
                         'value' => $item["value"],
                     ]
                 );
@@ -176,7 +175,7 @@ class ContactFormInputController extends ApiController
                         "id" => $item["id"],
                     ],
                     [
-                        'validation_name'  => $item['validation_name'],
+                        'validation_name' => $item['validation_name'],
                         "validation_value" => $item['validation_value'],
                     ]
                 );
