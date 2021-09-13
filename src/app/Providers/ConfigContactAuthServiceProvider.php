@@ -26,7 +26,7 @@ class ConfigContactAuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
         
         Gate::define('manage-contact-form', 'VCComponent\Laravel\User\Contracts\ContactFormPolicyInterface@ableToUse');
-        Gate::define('manage-contact-form-intput', 'VCComponent\Laravel\User\Contracts\ContactFormInputPolicyInterface@ableToUse');
+        Gate::define('manage-contact-form-input', 'VCComponent\Laravel\User\Contracts\ContactFormInputPolicyInterface@ableToUse');
         Gate::define('manage-contact-form-value', 'VCComponent\Laravel\User\Contracts\ContactFormValuePolicyInterface@ableToUse');
         //
     }
