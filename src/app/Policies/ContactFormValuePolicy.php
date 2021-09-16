@@ -6,8 +6,8 @@ use VCComponent\Laravel\ConfigContact\Contracts\ContactFormValuePolicyInterface;
 
 class ContactFormValuePolicy implements ContactFormValuePolicyInterface
 {
-    public function ableToUse($user)
+    public function manage($user)
     {
-        return true;
+        return $user->hasPermission('manage-contact-form-value');
     }
 }

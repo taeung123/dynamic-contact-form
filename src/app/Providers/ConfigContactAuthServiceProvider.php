@@ -4,6 +4,11 @@ namespace VCComponent\Laravel\ConfigContact\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use VCComponent\Laravel\ConfigContact\Contracts\ContactFormInputPolicyInterface;
+use VCComponent\Laravel\ConfigContact\Contracts\ContactFormPolicyInterface;
+use VCComponent\Laravel\ConfigContact\Contracts\ContactFormValuePolicyInterface;
+use VCComponent\Laravel\ConfigContact\Entites\ContactForm;
+use VCComponent\Laravel\ConfigContact\Entites\ContactFormValue;
 
 class ConfigContactAuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +18,9 @@ class ConfigContactAuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        //
+        ContactForm::class => ContactFormPolicyInterface::class,
+        ContactFormInput::class => ContactFormInputPolicyInterface::class,
+        ContactFormValue::class => ContactFormValuePolicyInterface::class,
     ];
 
     /**
@@ -24,10 +31,6 @@ class ConfigContactAuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        
-        Gate::define('manage-contact-form', 'VCComponent\Laravel\User\Contracts\ContactFormPolicyInterface@ableToUse');
-        Gate::define('manage-contact-form-input', 'VCComponent\Laravel\User\Contracts\ContactFormInputPolicyInterface@ableToUse');
-        Gate::define('manage-contact-form-value', 'VCComponent\Laravel\User\Contracts\ContactFormValuePolicyInterface@ableToUse');
         //
     }
 }

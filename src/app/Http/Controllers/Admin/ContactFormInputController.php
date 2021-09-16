@@ -51,7 +51,7 @@ class ContactFormInputController extends ApiController
 
         if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
             $user = $this->getAuthenticatedUser();
-            if (Gate::forUser($user)->denies('manage-contact-form-input')) {
+            if (Gate::forUser($user)->denies('manage', $this->contact_form_input_entity)) {
                 throw new PermissionDeniedException();
             }
             foreach (config('dynamic-contact-form.auth_middleware.admin') as $middleware) {
