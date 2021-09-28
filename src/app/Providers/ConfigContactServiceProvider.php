@@ -3,6 +3,12 @@
 namespace VCComponent\Laravel\ConfigContact\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use VCComponent\Laravel\ConfigContact\Contracts\ContactFormInputPolicyInterface;
+use VCComponent\Laravel\ConfigContact\Contracts\ContactFormPolicyInterface;
+use VCComponent\Laravel\ConfigContact\Contracts\ContactFormValuePolicyInterface;
+use VCComponent\Laravel\ConfigContact\Policies\ContactFormInputPolicy;
+use VCComponent\Laravel\ConfigContact\Policies\ContactFormPolicy;
+use VCComponent\Laravel\ConfigContact\Policies\ContactFormValuePolicy;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputItemRepository;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputItemRepositoryEloquent;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormInputRepository;
@@ -29,6 +35,11 @@ class ConfigContactServiceProvider extends ServiceProvider
         $this->app->bind(ContactFormInputRepository::class, ContactFormInputRepositoryEloquent::class);
         $this->app->bind(ContactFormInputItemRepository::class, ContactFormInputItemRepositoryEloquent::class);
         $this->app->bind(ContactFormInputValidationRepository::class, ContactFormInputValidationRepositoryEloquent::class);
+        $this->app->bind(ContactFormPolicyInterface::class, ContactFormPolicy::class);
+        $this->app->bind(ContactFormInputPolicyInterface::class, ContactFormInputPolicy::class);
+        $this->app->bind(ContactFormValuePolicyInterface::class, ContactFormValuePolicy::class);
+
+        $this->app->register(ConfigContactAuthServiceProvider::class);
     }
 
     /**

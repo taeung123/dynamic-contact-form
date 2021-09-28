@@ -3,6 +3,7 @@ namespace VCComponent\Laravel\ConfigContact\Http\Controllers\Admin;
 
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use VCComponent\Laravel\ConfigContact\Repositories\ContactFormRepository;
 use VCComponent\Laravel\ConfigContact\Traits\CheckRequestMethods;
 use VCComponent\Laravel\ConfigContact\Traits\Helpers;
@@ -31,7 +32,7 @@ class ContactFormController extends ApiController
 
         if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
             $user = $this->getAuthenticatedUser();
-            if (!$this->contact_form_entity->ableToUse($user)) {
+            if (Gate::forUser($user)->denies('manage', $this->contact_form_entity)) {
                 throw new PermissionDeniedException();
             }
             foreach (config('dynamic-contact-form.auth_middleware.admin') as $middleware) {
