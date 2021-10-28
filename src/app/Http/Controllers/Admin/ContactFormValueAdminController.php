@@ -85,8 +85,29 @@ class ContactFormValueAdminController extends ApiController
         return $this->success();
     }
 
+    public function getFromDate($request, $query)
+    {
+        if ($request->has('from_date') && $request->from_date != null) {
+            $query = $query->whereDate('created_at', '>=', $request->from_date);
+        }
+        return $query;
+    }
+    public function getToDate($request, $query)
+    {
+        if ($request->has('to_date') && $request->to_date != null) {
+            $query = $query->whereDate('created_at', '<=', $request->to_date);
+        }
+        return $query;
+    }
+    public function getPosition($request, $query) {
+        if ($request->has('position') && $request->position != null ) {
+            $query = $query->whereJsonContains('payload_slug->vi_tri_ung_tuyen', $request->position);
+        }
+        return $query;
+    }
     public function getPayload(Request $request, $id)
     {
+
         $contact_form_value = $this->contact_form_value_entity->where('contact_form_id', $id)->exists();
 
         if (!$contact_form_value) {
@@ -97,10 +118,14 @@ class ContactFormValueAdminController extends ApiController
         $query              = $this->contact_form_value_entity;
         $query              = $this->checkStatusRequest($request, $query);
         $query              = $query->where('contact_form_id', $id)->orderBy('id', 'desc');
+        $query              = $this->getFromDate($request, $query);
+        $query              = $this->getToDate($request, $query);
+        $query              = $this->getPosition($request, $query);
         $query              = $this->checkPerPageRequest($request, $query);
         $contact_form_value = $query;
 
         if ($request->has('search')) {
+
             return $this->searchPayload($request, $id);
         }
 
@@ -124,9 +149,13 @@ class ContactFormValueAdminController extends ApiController
     public function searchPayload(Request $request, $id)
     {
         $query    = $this->contact_form_value_entity->where('contact_form_id', $id);
+        $query    = $this->getFromDate($request, $query);
+        $query    = $this->getToDate($request, $query);
+        $query    = $this->getPosition($request, $query);
         $query    = $this->checkStatusRequest($request, $query);
         $payloads = $query->pluck('id', 'payload')->toArray();
         $search   = $request->get('search');
+
         $per_page = $request->has('per_page') ? $request->get('per_page') : 15;
 
         $data = [];

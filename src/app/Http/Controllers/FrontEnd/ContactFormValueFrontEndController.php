@@ -38,7 +38,6 @@ class ContactFormValueFrontEndController extends Controller
 
     public function store(Request $request)
     {
-
         $this->contact_form_value_front_end_validation->isValid($request);
 
         $data = $request->all();
@@ -46,7 +45,6 @@ class ContactFormValueFrontEndController extends Controller
         array_shift($data);
         $array_labels = [];
         $array_values = [];
-
         foreach (array_keys($data) as $value) {
             $query_get_label = $this->contact_form_input_entity::select('label')->whereHas('contactForm', function ($q) use ($contact_form_id) {
                 $q->where('id', $contact_form_id);
@@ -72,6 +70,7 @@ class ContactFormValueFrontEndController extends Controller
         $payload = array_combine($array_labels, $array_values);
         $contact_form_value_data['contact_form_id'] = $request->contact_form_id;
         $contact_form_value_data['payload'] = json_encode($payload);
+        $contact_form_value_data['payload_slug'] = json_encode($data);
         $contact_form_value_data['status'] = "2";
 
         $contact_form_value = $this->contact_form_value_repository->create($contact_form_value_data);
