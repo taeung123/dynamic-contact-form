@@ -1,4 +1,5 @@
 <?php
+
 namespace VCComponent\Laravel\ConfigContact\Http\Controllers\Admin;
 
 use Exception;
@@ -84,7 +85,26 @@ class ContactFormValueAdminController extends ApiController
 
         return $this->success();
     }
-
+    public function getFromDate($request, $query)
+    {
+        if ($request->has('from_date')) {
+            $query = $query->whereDate('created_at', '>=', $request->from_date);
+        }
+        return $query;
+    }
+    public function getToDate($request, $query)
+    {
+        if ($request->has('to_date')) {
+            $query = $query->whereDate('created_at', '<=', $request->to_date);
+        }
+        return $query;
+    }
+    public function getPosition($request, $query) {
+        if ($request->has('position')) {
+            $query = $query->whereJsonContains('payload_slug->vi_tri_ung_tuyen', $request->position);
+        }
+        return $query;
+    }
     public function getPayload(Request $request, $id)
     {
         $contact_form_value = $this->contact_form_value_entity->where('contact_form_id', $id)->exists();
@@ -97,6 +117,9 @@ class ContactFormValueAdminController extends ApiController
         $query              = $this->contact_form_value_entity;
         $query              = $this->checkStatusRequest($request, $query);
         $query              = $query->where('contact_form_id', $id)->orderBy('id', 'desc');
+        $query              = $this->getFromDate($request, $query);
+        $query              = $this->getToDate($request, $query);
+        $query              = $this->getPosition($request, $query);
         $query              = $this->checkPerPageRequest($request, $query);
         $contact_form_value = $query;
 
