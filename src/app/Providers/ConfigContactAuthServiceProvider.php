@@ -8,6 +8,7 @@ use VCComponent\Laravel\ConfigContact\Contracts\ContactFormInputPolicyInterface;
 use VCComponent\Laravel\ConfigContact\Contracts\ContactFormPolicyInterface;
 use VCComponent\Laravel\ConfigContact\Contracts\ContactFormValuePolicyInterface;
 use VCComponent\Laravel\ConfigContact\Entites\ContactForm;
+use VCComponent\Laravel\ConfigContact\Entites\ContactFormInput;
 use VCComponent\Laravel\ConfigContact\Entites\ContactFormValue;
 
 class ConfigContactAuthServiceProvider extends ServiceProvider
