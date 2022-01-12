@@ -77,7 +77,7 @@ class ContactFormValueAdminController extends ApiController
         $this->validator->isValid($request->ids, 'RULE_IDS');
         $ids = $request->ids;
         $contact_form_value = $this->contact_form_value_entity->whereIn('id', $ids);
-        if (!$contact_form_value) {
+        if (!$contact_form_value || $contact_form_value->get()->count() == 0) {
             throw new Exception('Contact form value does not exist');
         }
         $contact_form_value->delete();
