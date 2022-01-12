@@ -10,7 +10,7 @@ use VCComponent\Laravel\ConfigContact\Traits\Helpers;
 use VCComponent\Laravel\ConfigContact\Transformers\ContactFormValueTransformer;
 use VCComponent\Laravel\Vicoders\Core\Controllers\ApiController;
 use VCComponent\Laravel\Vicoders\Core\Exceptions\PermissionDeniedException;
-
+use VCComponent\Laravel\ConfigContact\Validators\ContactFormValueValidation
 class ContactFormValueAdminController extends ApiController
 {
     use CheckRequestMethods, Helpers;
@@ -19,12 +19,12 @@ class ContactFormValueAdminController extends ApiController
     protected $contact_form_value_transformer;
     protected $contact_form_value_entity;
 
-    public function __construct(ContactFormValueRepository $contact_form_value_repository, ContactFormValueTransformer $contact_form_value_transformer)
+    public function __construct(ContactFormValueRepository $contact_form_value_repository, ContactFormValueTransformer $contact_form_value_transformer, ContactFormValueValidation $validator)
     {
         $this->contact_form_value_repository  = $contact_form_value_repository;
         $this->contact_form_value_transformer = $contact_form_value_transformer;
         $this->contact_form_value_entity      = $contact_form_value_repository->getEntity();
-
+        $this->validator = $validator;
         if (!empty(config('dynamic-contact-form.auth_middleware.admin'))) {
             $user = $this->getAuthenticatedUser();
             if (Gate::forUser($user)->denies('manage', $this->contact_form_value_entity)) {
@@ -74,6 +74,7 @@ class ContactFormValueAdminController extends ApiController
 
     public function bulkDelete(Request $request)
     {
+        $this->validator->isValid($request->ids, 'RULE_IDS');
         $ids = $request->ids;
         $contact_form_value = $this->contact_form_value_entity->whereIn('id', $ids);
         if (!$contact_form_value) {
