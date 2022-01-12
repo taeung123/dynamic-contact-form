@@ -72,6 +72,16 @@ class ContactFormValueAdminController extends ApiController
         return $this->response->item($contact_form_value, $this->contact_form_value_transformer);
     }
 
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->ids;
+        $contact_form_value = $this->contact_form_value_entity->whereIn('id', $ids);
+        if (!$contact_form_value) {
+            throw new Exception('Contact form value does not exist');
+        }
+        $contact_form_value->delete();
+        return $this->success();
+    }
     public function destroy($id)
     {
         $contact_form_value = $this->contact_form_value_entity->find($id);
