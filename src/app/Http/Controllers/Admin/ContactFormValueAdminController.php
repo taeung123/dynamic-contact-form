@@ -10,7 +10,7 @@ use VCComponent\Laravel\ConfigContact\Traits\Helpers;
 use VCComponent\Laravel\ConfigContact\Transformers\ContactFormValueTransformer;
 use VCComponent\Laravel\Vicoders\Core\Controllers\ApiController;
 use VCComponent\Laravel\Vicoders\Core\Exceptions\PermissionDeniedException;
-use VCComponent\Laravel\ConfigContact\Validators\ContactFormValueValidation
+use VCComponent\Laravel\ConfigContact\Validators\ContactFormValueValidation;
 class ContactFormValueAdminController extends ApiController
 {
     use CheckRequestMethods, Helpers;
